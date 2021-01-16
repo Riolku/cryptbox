@@ -10,17 +10,19 @@ def make_json_response(func):
 
     return inner_function
 
-def wrap_request(decorated_function):
+def wrap_request(post = False):
+  def i(decorated_function):
     @make_json_response
     def inner_function(*args, **kwargs):
-        if request.is_json:
-            return decorated_function(*args, **kwargs)
+      if not post or request.is_json:
+        return decorated_function(*args, **kwargs)
 
-        return dict(
-            status = "ERROR",
-            code = "INVALID_MIMETYPE"
-        )
+      return dict(
+        status = "ERROR",
+        code = "INVALID_MIMETYPE"
+      )
 
     inner_function.__name__ = decorated_function.__name__
 
     return inner_function
+  return i

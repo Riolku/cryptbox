@@ -7,6 +7,9 @@ import styles from '../styles/Login.module.css';
 
 import post from './post';
 
+import * from '../crypto/user';
+import * from '../crypto/files';
+
 function Register() {
     let [errorMessage, setErrorMessage] = useState('');
 
@@ -21,12 +24,20 @@ function Register() {
         else if(password == '') setErrorMessage('Password cannot be empty');
         else if(password != repassword) setErrorMessage('Passwords do not match');
         else{
+            let master_key = getUserMasterKey(username, password);
+
             post('/register', {
                 'username': username,
-                'password': password
+                'password': prepareMasterKeyForLogin(master_key),
+                'home' : newDirectory("Home", master_key),
+                'trash' : newDirectory("Trash", master_key);
             }, data => {
                 if(data['status'] != 'ok') setErrorMessage('Login failed');
                 else{
+                    let storage_string = exportMasterKeyForStorage(master_key);
+
+                    localStorage.setItem('master_key', storage_string);
+
                     localStorage.setItem('username', username);
                     window.location.reload();
                 }
