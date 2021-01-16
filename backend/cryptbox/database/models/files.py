@@ -12,4 +12,4 @@ class Files:
     directory = dbcol(dbint, dbforkey(Directories.id), nullable = False)
 
     encrypted_name = dbcol(dbstr(NAME_MAX_LENGTH), nullable = False)
-    name_iv = dbcol(dbstr(NAME_MAX_LENGTH), nullable = False, unique = True)
+    name_iv = dbcol(dbstr(IV_LENGTH), nullable = False, unique = True)
