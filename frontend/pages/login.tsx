@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 
 import styles from '../styles/Login.module.css';
 
+import post from './post';
+
 function login() {
     let [errorMessage, setErrorMessage] = useState('');
 
@@ -12,17 +14,12 @@ function login() {
         if(username == '') setErrorMessage('Username cannot be empty');
         else if(password == '') setErrorMessage('Password cannot be empty');
         else{
-            fetch('http://167.99.181.60:5000/authenticate', {
-                method: 'POST',
-                credentials: 'include',
-                body: JSON.stringify({
-                    'username': username,
-                    'password': password
-                })
-            }).then(ret => ret.json())
-            .then(data => {
-                
-            });
+            post('/authenticate', {
+              'username': username,
+              'password': password
+            }, data => {
+              console.log(data);
+            })
         }
     }
 
