@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
+//import 'dotenv/config';
+
 import Navbar from '../components/Navbar';
 
 import styles from '../styles/Login.module.css';
@@ -19,7 +21,7 @@ function login() {
         if(username == '') setErrorMessage('Username cannot be empty');
         else if(password == '') setErrorMessage('Password cannot be empty');
         else{
-            post(process.env.HOST + '/authenticate', {
+            post('/authenticate', {
               'username': username,
               'password': password
             }, data => {
