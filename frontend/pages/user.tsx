@@ -11,6 +11,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import FilePicker from '../components/FilePicker';
 import Navbar from '../components/Navbar';
+import Directory from '../components/Directory'
 
 import styles from '../styles/User.module.css';
 
@@ -95,14 +96,7 @@ export default function User(){
             <div className = { styles.userBackground }>
                 <h1 className = { styles.userHeader }> { fvstate } </h1>
                 <div className = { styles.filesBackground }>
-                    {
-                        testData.map((value, index) => {
-                            return (
-                                <div className = { styles.fileEntryContainer } style = {{ borderBottom: index==testData.length-1?'1px solid rgba(0,0,0,0.2)':0 }}>
-                                </div>
-                            )
-                        })
-                    }
+                    <Directory file_type="file" parent="test" encrypted_name="test" modified="a"/>
                 </div>
             </div>
         </div>
