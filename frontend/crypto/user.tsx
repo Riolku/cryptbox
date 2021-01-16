@@ -19,7 +19,7 @@ async function importMasterKeyFromStorage(storage_string) {
 
   let bytes = fromStringToBytes(decoded_string);
 
-  return await window.crypto.subtle.importKey("raw", bytes);
+  return window.crypto.subtle.importKey("raw", bytes);
 }
 
 async function prepareMasterKeyForLogin(master_key) {

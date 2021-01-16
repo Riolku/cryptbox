@@ -34,11 +34,19 @@ function fromStringToByteString(string) {
 
   let res = '';
   for(let i=0; i<codeUnits.length; i++){
-      res += String.fromCharCode(codeUnits[i]>>8);
-      res += String.fromCharCode(codeUnits[i]&((1<<8)-1));
+      res += String.fromCharCode(first_eight_bits(codeUnits[i]));
+      res += String.fromCharCode(last_eight_bits(codeUnits[i]));
   }
 
   return res;
+}
+
+function first_eight_bits(int16) {
+  return int16 >> 8;
+}
+
+function last_eight_bits(int16) {
+  return int16 & 255;
 }
 
 function fromByteStringToString(binary) {
@@ -50,9 +58,13 @@ function fromByteStringToString(binary) {
 
   let res = '';
   for(let i=0; i<bytes.length; i+=2)
-      res += String.fromCharCode((bytes[i]<<1)|bytes[i+1]);
+      res += String.fromCharCode(combine_int8s(bytes[i], bytes[i + 1]));
 
   return res;
+}
+
+function combine_int8s(int8_a, int8_b) {
+  return (int8_a << 8) | int8_b;
 }
 
 export { decoder, encoder, fromStringToBytes, fromBytesToString, b64encode, b64decode };
