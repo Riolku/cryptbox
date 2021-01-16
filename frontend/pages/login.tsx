@@ -5,6 +5,8 @@ import Navbar from '../components/Navbar';
 
 import styles from '../styles/Login.module.css';
 
+import post from './post';
+
 function login() {
     let [errorMessage, setErrorMessage] = useState('');
 
@@ -17,16 +19,11 @@ function login() {
         if(username == '') setErrorMessage('Username cannot be empty');
         else if(password == '') setErrorMessage('Password cannot be empty');
         else{
-            fetch('http://167.99.181.60:5000/authenticate', {
-                method: 'POST',
-                credentials: 'include',
-                body: JSON.stringify({
-                    'username': username,
-                    'password': password
-                })
-            }).then(ret => ret.json())
-            .then(data => {
-                if(data['status'] != 'Ok') setErrorMessage('Login failed');
+            post('/authenticate', {
+              'username': username,
+              'password': password
+            }, data => {
+                if(data['status'] != 'ok') setErrorMessage('Login failed');
                 else{
                     localStorage.setItem('username', username);
                     window.location.reload();
