@@ -45,8 +45,8 @@ function Register() {
                     <h1 className = { styles.loginHeader }> REGISTER </h1>
                     <h1 className = { styles.errorMessage }> { errorMessage } </h1>
                     <input id = 'registerUsernameField' className = { styles.loginUsernameField } placeholder = 'Username' />
-                    <input id = 'registerPasswordField' className = { styles.loginPasswordField } placeholder = 'Password' />
-                    <input id = 'registerConfirmPasswordField' className = { styles.loginPasswordField } placeholder = 'Confirm Password' style = {{ top: '46%' }} />
+                    <input id = 'registerPasswordField' className = { styles.loginPasswordField } placeholder = 'Password' type="password" />
+                    <input id = 'registerConfirmPasswordField' className = { styles.loginPasswordField } placeholder = 'Confirm Password' style = {{ top: '46%' }} type="password" />
                     <button className = { styles.loginSubmitButton } style = {{ top: '61%' }} onClick = { submitRegister }> Register </button>
                 </div>
             </div>
