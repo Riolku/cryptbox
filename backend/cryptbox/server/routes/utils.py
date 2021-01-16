@@ -18,3 +18,5 @@ def wrap_request(decorated_function):
             status = "ERROR",
             code = "INVALID_MIMETYPE"
         )
+
+    return inner_function
