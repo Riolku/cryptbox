@@ -9,4 +9,6 @@ class Directories(db.Model):
 
     id = dbcol(dbint, primary_key = True)
 
-    encrypted_name = dbcol(dbstr(4096))
+    parent = dbcol(dbint, dbforkey(Directories.id), nullable = True) # the parent of root-level directories should be null
+
+    encrypted_name = dbcol(dbstr(NAME_MAX_LENGTH), nullable = False)
