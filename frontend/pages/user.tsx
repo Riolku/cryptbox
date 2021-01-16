@@ -32,7 +32,7 @@ const testData = [
         'created': '12/29/2021 10:41 PM',
     },
     {
-        'encrypted_namev': 'File 3',
+        'encrypted_name': 'File 3',
         'extension': 'folder',
         'modified': '12/3/2021 10:41 PM',
         'created': '12/3/2021 10:41 PM',
