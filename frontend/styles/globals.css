@@ -20,6 +20,17 @@ a {
     src: local('FiraSans-Light'), url('../fonts/FiraSans-Light.ttf') format('truetype');
 }
 
+@font-face {
+    font-family: 'FiraSans-Medium';
+    src: local('FiraSans-Medium'), url('../fonts/FiraSans-Medium.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'FiraSans-Regular';
+    src: local('FiraSans-Regular'), url('../fonts/FiraSans-Regular.ttf') format('truetype');
+}
+
 :root {
     --font: 'FiraSans-Light';
+    --bold-font: 'FiraSans-Medium';
 }
