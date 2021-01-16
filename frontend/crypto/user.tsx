@@ -1,4 +1,4 @@
-import * from './utils';
+import { subtle, decoder, encoder, fromStringToBytes, fromBytesToString, b64encode, b64decode } from './utils';
 
 async function getUserMasterKey(username, password) {
   let salt = deriveBitsFromUsername(username);
@@ -36,18 +36,33 @@ async function prepareMasterKeyForLogin(master_key) {
   return b64encode(bytes);
 }
 
-function importPBKDF2key() {
-  return await subtle.importKey(
-    "raw",
-    fromStringToBytes(password),
-    "PBKDF2",
-    false,
-    ["deriveBits", "deriveKey"]
+async function deriveBitsFromUsername(username) {
+  let key = await importPBKDF2key(username);
+
+  console.log(key);
+
+  return subtle.deriveBits(
+    {
+      name : "PBKDF2",
+      salt : fromStringToBytes('username'),
+      iterations : 1000,
+      hash : "SHA-256"
+    },
+    key,
+    256
+  );
+}
+
+async function deriveKeyFromPasswordAndSalt(password, salt) {
+  let key = await importPBKDF2key(password);
+
+  return pbkdf2_deriveKey(
+    key, salt, 100000
   );
 }
 
 async function pbkdf2_deriveKey(key, salt, iterations) {
-  return await subtle.deriveKey(
+  return subtle.deriveKey(
     {
       name : "PBKDF2",
       salt : salt,
@@ -61,25 +76,14 @@ async function pbkdf2_deriveKey(key, salt, iterations) {
   );
 }
 
-async function deriveBitsFromUsername(username) {
-  let key = importPBKDF2key(salt);
-
-  return await subtle.deriveBits(
-    {
-      name : "PBKDF2",
-      salt : fromStringToBytes('username'),
-      iterations : 1000,
-      hash : "SHA-256"
-    },
-    key,
-    256
+async function importPBKDF2key(key_material) {
+  return subtle.importKey(
+    "raw",
+    fromStringToBytes(key_material),
+    "PBKDF2",
+    false,
+    ["deriveBits", "deriveKey"]
   );
 }
 
-async function deriveKeyFromPasswordAndSalt(password, salt) {
-  let key = importPBKDF2key(password);
-
-  return pbkdf2_deriveKey(
-    key, salt, 100000
-  );
-}
+export { getUserMasterKey, exportMasterKeyForStorage, importMasterKeyFromStorage, prepareMasterKeyForLogin };

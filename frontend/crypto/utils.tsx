@@ -1,4 +1,6 @@
-var subtle = window.crypto.subtle;
+if(process.browser) {
+  var subtle = window.crypto.subtle;
+}
 
 var decoder = new TextDecoder();
 var encoder = new TextEncoder();
@@ -7,7 +9,7 @@ function fromStringToBytes(string) {
   return encoder.encode(string);
 }
 
-function fromBytesToString(binary) {
+function fromBytesToString(string) {
   return decoder.decode(string);
 }
 
@@ -42,3 +44,5 @@ function fromByteStringToString(binary) {
 
   return String.fromCharCode(...new Uint16Array(bytes.buffer));
 }
+
+export { subtle, decoder, encoder, fromStringToBytes, fromBytesToString, b64encode, b64decode };
