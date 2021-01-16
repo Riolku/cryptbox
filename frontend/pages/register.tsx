@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
+import * as dotenv from 'dotenv';
+
 import Navbar from '../components/Navbar';
 
 import styles from '../styles/Login.module.css';
 
 function Register() {
+    dotenv.config()
+
     let [errorMessage, setErrorMessage] = useState('');
 
     const router = useRouter();
@@ -19,7 +23,7 @@ function Register() {
         else if(password == '') setErrorMessage('Password cannot be empty');
         else if(password != repassword) setErrorMessage('Passwords do not match');
         else{
-            fetch('http://167.99.181.60:5000/register', {
+            fetch(process.env.HOST + '/register', {
                 method: 'POST',
                 credentials: 'include',
                 body: JSON.stringify({
