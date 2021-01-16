@@ -16,32 +16,36 @@ function splitString(str, c) {
     return ret;
 }
 
-const fileInfo = () => {
+const fileInfo = ({ closeInfo }: { closeInfo: Function }) => {
     let [firstTime, setFirstTime] = useState(true);
     let [errorMessage, setErrorMessage] = useState('');
     let [data, setData] = useState(null);
 
     const router = useRouter();
 
-    // let urlPath = splitString(router.pathname, '/');
-    // if(urlPath.length != 3){ //file does not exist
-    //     return null;
-    // }
+    function closeBox() {
+        closeInfo();
+    }
 
-    // if(firstTime){
-    //     setFirstTime(false);
-    //     fetch('https://api.cryptbox.kgugeler.ca/file/' + urlPath[2], {
-    //         method: 'GET',
-    //         credentials: 'include'
-    //     }).then(ret => ret.json())
-    //     .then(data => {
-    //         if(data['status'] != 'ok') setErrorMessage(data['status']);
-    //         else setData(data);
-    //     });
-    // }
+    let urlPath = splitString(router.pathname, '/');
+    if(urlPath.length != 3){ //file does not exist
+        return null;
+    }
+
+    if(firstTime){
+        setFirstTime(false);
+        fetch('https://api.cryptbox.kgugeler.ca/file/' + urlPath[2], {
+            method: 'GET',
+            credentials: 'include'
+        }).then(ret => ret.json())
+        .then(data => {
+            if(data['status'] != 'ok') setErrorMessage(data['status']);
+            else setData(data);
+        });
+    }
 
     return (
-        <div className = { styles.fileInfoBackground }>
+        <div className = { styles.fileInfoBackground } onClick = { closeBox }>
             <div className = { styles.fileBackground }>
                 <div className = { styles.filePreviewContainer }>
                     

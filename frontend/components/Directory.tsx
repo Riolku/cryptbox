@@ -1,31 +1,68 @@
 import React, { useRef } from 'react';
+import { useRouter } from 'next/router';
 
 import FolderIcon from '@material-ui/icons/Folder';
+import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
+import ImageIcon from '@material-ui/icons/Image';
 import DescriptionIcon from '@material-ui/icons/Description';
+import AttachFileIcon from '@material-ui/icons/AttachFile';
 
 import styles from '../styles/Directory.module.css';
 
+const mappedIcon = {
+    'folder': <FolderIcon />,
+    'pdf': <PictureAsPdfIcon />,
+    'png': <ImageIcon />,
+    'jpg': <ImageIcon />,
+    'jpeg': <ImageIcon />,
+    'txt': <DescriptionIcon />,
+};
+
 interface DirectoryProps {
-    file_type: string,
-    parent: string,
-    encrypted_name: string,
-    modified: string
+    data: Object,
+    changeDirectory: Function,
+    isFirst: boolean,
+    isLast: boolean
 }
 
-export default function Directory({file_type, parent, encrypted_name, modified}: DirectoryProps){
+function cont(value, dict) {
+    for(let [key, val] of Object.entries(dict)) {
+        if(value != key) continue;
+        return true;
+    }
+    return false;
+}
 
-    var typeIcon;
-    if(file_type === "directory"){
-        typeIcon = <FolderIcon />
-    } else if(file_type === "file"){
-        typeIcon = <DescriptionIcon />
+export default function Directory({data, changeDirectory, isFirst, isLast}: DirectoryProps){
+    const router = useRouter();
+
+    function selectFile() {
+        if(data['extension'] == 'folder') changeDirectory(data['id']);
+        else router.push('/user/file/' + data['id']);
     }
 
+    if(isFirst){
+        return(
+            <div className = { styles.fileEntryContainerNoHover } style = {{ borderTop: 0, borderBottom: isLast?'1px solid #00000033':'' }}>
+                <h1 className = { styles.fileEntryComponent } style = {{ fontFamily: 'var(--bold-font)', paddingLeft: '0.5%', width: '40%' }}> File Name </h1>
+    
+                <h1 className = { styles.fileEntryComponentRight } style = {{ fontFamily: 'var(--bold-font)', width: '10%' }}> Date Uploaded </h1>
+                <h1 className = { styles.fileEntryComponentRight } style = {{ fontFamily: 'var(--bold-font)', width: '10%' }}> Last Modified </h1>
+                <h1 className = { styles.fileEntryComponentRight } style = {{ fontFamily: 'var(--bold-font)', width: '6%' }}> Extension </h1>
+            </div>
+        )
+    }
+
+    let typeIcon = cont(data['extension'], mappedIcon)?mappedIcon[data['extension']]:<AttachFileIcon />;
+
     return(
-        <div className={styles.fileEntryContainer}>
-            <div className={styles.fileEntryComponent}>{typeIcon}</div>
-            <div className={styles.fileEntryComponent}><h1>{encrypted_name}</h1></div>
-            <div className={styles.fileEntryComponent}><p>{modified}</p></div>
+        <div className = { styles.fileEntryContainer } style = {{ borderBottom: isLast?'1px solid #00000033':'' }} onClick = { selectFile }>
+            <div className = { styles.fileEntryIcon } style = {{ width: '2%' }}> { typeIcon } </div>
+            <h1 className = { styles.fileEntryComponent } style = {{ width: '40%' }}> { data['encrypted_name'] } </h1>
+
+            <h1 className = { styles.fileEntryComponentRight } style = {{ width: '10%' }}> { data['created'] } </h1>
+            <h1 className = { styles.fileEntryComponentRight } style = {{ width: '10%' }}> { data['modified'] } </h1>
+            <h1 className = { styles.fileEntryComponentRight } style = {{ width: '6%' }}> { data['extension'] } </h1>
         </div>
     )
 }

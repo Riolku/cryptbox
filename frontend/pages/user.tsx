@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router';
 
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
@@ -12,6 +12,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import FilePicker from '../components/FilePicker';
 import Navbar from '../components/Navbar';
 import Directory from '../components/Directory'
+import FileInfo from '../components/FileInfo';
 
 import styles from '../styles/User.module.css';
 
@@ -19,13 +20,22 @@ const drawerWidth = 300;
 
 const testData = [
     {
-
+        'encrypted_name': 'File 1',
+        'extension': 'pdf',
+        'modified': '12/30/2021 10:41 PM',
+        'created': '12/30/2021 10:41 PM',
     },
     {
-
+        'encrypted_name': 'File 2',
+        'extension': 'png',
+        'modified': '12/29/2021 10:41 PM',
+        'created': '12/29/2021 10:41 PM',
     },
     {
-
+        'encrypted_name': 'File 3',
+        'extension': 'folder',
+        'modified': '12/3/2021 10:41 PM',
+        'created': '12/3/2021 10:41 PM',
     }
 ];
 
@@ -55,11 +65,31 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+function splitString(str, c) {
+    let ret = [], curr = '';
+    for(let i=0; i<str.length; i++){
+        if(str[i] == c){
+            if(curr.length > 0) ret.push(curr);
+            curr = '';
+        }else curr += str[i];
+    }
+    if(curr.length > 0) ret.push(curr);
+    return ret;
+}
+
 export default function User(){
     const classes = useStyles();
     const router = useRouter();
 
-    const [fvstate, setFVState] = useState("My Files")
+    const [fvstate, setFVState] = useState("My Files");
+    const [testUpload, setUpload] = useState("")
+
+    let [currentFolder, setCurrentFolder] = useState(0);
+    let [parentFolder, setParentFolder] = useState(0);
+    let [children, setChildren] = useState(null);
+
+    let [firstTime, setFirstTime] = useState(true);
+    let [baseDirectoryIDs, setBaseIDs] = useState({});
 
     const handleListItemClick =(event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: string)=>{
         setFVState(index)
@@ -68,6 +98,45 @@ export default function User(){
     function submitLogout() {
         localStorage.removeItem('username');
         router.push('/');
+    }
+
+    useEffect(() => {
+        fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder, {
+            method: 'GET',
+            credentials: 'include'
+        }).then(ret => ret.json())
+        .then(data => {
+            if(data['status'] != 'ok'){
+
+            }else{
+                setParentFolder(data['parent']);
+                setChildren(data['children']);
+            }
+        });
+    }, [currentFolder]);
+
+    useEffect(() => {
+        setCurrentFolder(baseDirectoryIDs[fvstate]);
+    }, [fvstate]);
+
+    if(firstTime){
+        setFirstTime(false);
+        fetch('https://api.cryptbox.kgugeler.ca/user/dirs', {
+            method: 'GET',
+            credentials: 'include'
+        }).then(ret => ret.json())
+        .then(data => {
+            if(data['status'] != 'ok'){
+
+            }else{
+                let ret = {
+                    'My Files': data['home'],
+                    'Shared With Me': data['shared'],
+                    'Trash': data['trash']
+                };
+                setBaseIDs(ret);
+            }
+        });
     }
 
     return(
@@ -94,9 +163,17 @@ export default function User(){
                 </List>
             </div>
             <div className = { styles.userBackground }>
-                <h1 className = { styles.userHeader }> { fvstate } </h1>
+                <h1 className = { styles.userHeader }> { testUpload } </h1>
+                <FilePicker onFile={(file)=>{
+                    setUpload(file.name)
+                }}></FilePicker>
                 <div className = { styles.filesBackground }>
-                    <Directory file_type="file" parent="test" encrypted_name="test" modified="a"/>
+                    <Directory data = { null } changeDirectory = { null } isFirst = { true } isLast = { false } />
+                    {
+                        testData.map((value, index) => {
+                            return <Directory data = { value } changeDirectory = { setCurrentFolder } isFirst = { false } isLast = { index == testData.length-1 } />
+                        })
+                    }
                 </div>
             </div>
         </div>
