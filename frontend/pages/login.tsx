@@ -39,7 +39,7 @@ function login() {
 
     return (
         <div>
-            <Navbar />
+            <Navbar linkCol = 'black' />
             <div className = { styles.mainBackground }>
                 <div className = { styles.loginBox }>
                     <h1 className = { styles.loginHeader }> LOGIN </h1>

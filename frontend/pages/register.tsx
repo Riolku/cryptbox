@@ -42,7 +42,7 @@ function Register() {
 
     return (
         <div>
-            <Navbar />
+            <Navbar linkCol = 'black' />
             <div className = { styles.mainBackground }>
                 <div className = { styles.loginBox }>
                     <h1 className = { styles.loginHeader }> REGISTER </h1>
@@ -50,7 +50,7 @@ function Register() {
                     <input id = 'registerUsernameField' className = { styles.loginUsernameField } placeholder = 'Username' />
                     <input id = 'registerPasswordField' className = { styles.loginPasswordField } placeholder = 'Password' />
                     <input id = 'registerConfirmPasswordField' className = { styles.loginPasswordField } placeholder = 'Confirm Password' style = {{ top: '46%' }} />
-                    <button className = { styles.loginSubmitButton } style = {{ top: '61%' }} onClick = { submitRegister }> Register </button>
+                    <button className = { styles.loginSubmitButton } style = {{ top: '61%' }} onClick = { submitRegister }> SUBMIT </button>
                 </div>
             </div>
         </div>
