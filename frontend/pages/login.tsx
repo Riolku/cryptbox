@@ -51,7 +51,7 @@ function login() {
                     <h1 className = { styles.loginHeader }> LOGIN </h1>
                     <h1 className = { styles.errorMessage }> { errorMessage } </h1>
                     <input id = 'loginUsernameField' className = { styles.loginUsernameField } placeholder = 'Username' />
-                    <input id = 'loginPasswordField' className = { styles.loginPasswordField } placeholder = 'Password' />
+                    <input id = 'loginPasswordField' className = { styles.loginPasswordField } placeholder = 'Password' type="password" />
                     <button className = { styles.loginSubmitButton } onClick = { submitLogin }> SUBMIT </button>
                 </div>
             </div>
