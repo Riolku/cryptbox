@@ -21,7 +21,7 @@ function login() {
                 })
             }).then(ret => ret.json())
             .then(data => {
-
+                
             });
         }
     }

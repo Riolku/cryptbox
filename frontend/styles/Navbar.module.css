@@ -1,0 +1,35 @@
+.navbarBackground {
+    position: fixed;
+    width: 100%;
+    top: 15px;
+    padding-left: 13%;
+    padding-right: 13%;
+    height: 80px;
+    font-family: var(--font);
+    font-size: 9px;
+    z-index: 10;
+}
+
+.navbarLinkContainer {
+    position: relative;
+    width: 120px;
+    height: 100%;
+}
+
+.navbarLinkRightContainer {
+    position: relative;
+    width: 120px;
+    height: 100%;
+    transform: translate(0,-100%);
+    float: right;
+}
+
+.navbarLink {
+    left: 50%;
+    top: 8px;
+    transform: translate(-50%,0);
+    font-size: 18px;
+    color: black;
+    position: absolute;
+    z-index: 10;
+}
