@@ -1,3 +1,5 @@
+import sys
+
 from cryptbox import app
 
 import cryptbox.server.routes
@@ -13,4 +15,5 @@ def add_cors(response):
   return response
 
 if __name__ == '__main__':
-    app.run(host = '0.0.0.0', port = 5000, debug = True)
+  debug = "debug" in sys.argv
+  app.run(host = '0.0.0.0', port = 5000 + debug * 1000, debug = debug)

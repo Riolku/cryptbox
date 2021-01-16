@@ -19,7 +19,7 @@ function login() {
         if(username == '') setErrorMessage('Username cannot be empty');
         else if(password == '') setErrorMessage('Password cannot be empty');
         else{
-            post('/authenticate', {
+            post(process.env.HOST + '/authenticate', {
               'username': username,
               'password': password
             }, data => {
