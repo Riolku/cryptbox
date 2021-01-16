@@ -1,17 +1,17 @@
-import * as React from 'react';
-import {useRef, useState} from 'react'
+import React, { useState } from 'react';
 import styles from '../styles/Login.module.css';
 
 export default function Register() {
-
     let [errorMessage, setErrorMessage] = useState('');
 
     function submitRegister() {
         let username = (document.getElementById('registerUsernameField') as HTMLInputElement).value;
         let password = (document.getElementById('registerPasswordField') as HTMLInputElement).value;
+        let repassword = (document.getElementById('registerConfirmPasswordField') as HTMLInputElement).value;
 
         if(username == '') setErrorMessage('Username cannot be empty');
         else if(password == '') setErrorMessage('Password cannot be empty');
+        else if(password != repassword) setErrorMessage('Passwords do not match');
         else{
             fetch('LINK', {
                 method: 'POST',
@@ -34,7 +34,8 @@ export default function Register() {
                 <h1 className = { styles.errorMessage }> { errorMessage } </h1>
                 <input id = 'registerUsernameField' className = { styles.loginUsernameField } placeholder = 'Username' />
                 <input id = 'registerPasswordField' className = { styles.loginPasswordField } placeholder = 'Password' />
-                <button className = { styles.loginSubmitButton } onClick = { submitRegister }> Register </button>
+                <input id = 'registerConfirmPasswordField' className = { styles.loginPasswordField } placeholder = 'Confirm Password' style = {{ top: '46%' }} />
+                <button className = { styles.loginSubmitButton } style = {{ top: '61%' }} onClick = { submitRegister }> Register </button>
             </div>
         </div>
     );
