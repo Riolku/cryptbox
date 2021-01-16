@@ -82,6 +82,7 @@ export default function User(){
     const router = useRouter();
 
     const [fvstate, setFVState] = useState("My Files");
+    const [testUpload, setUpload] = useState("")
 
     let [currentFolder, setCurrentFolder] = useState(0);
     let [parentFolder, setParentFolder] = useState(0);
@@ -162,7 +163,10 @@ export default function User(){
                 </List>
             </div>
             <div className = { styles.userBackground }>
-                <h1 className = { styles.userHeader }> { fvstate } </h1>
+                <h1 className = { styles.userHeader }> { testUpload } </h1>
+                <FilePicker onFile={(file)=>{
+                    setUpload(file.name)
+                }}></FilePicker>
                 <div className = { styles.filesBackground }>
                     <Directory data = { null } changeDirectory = { null } isFirst = { true } isLast = { false } />
                     {
