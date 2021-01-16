@@ -4,7 +4,7 @@ async function newDirectory(name, master_key) {
   iv = newIV();
 
   return {
-    encryptedName : encryptContent(name, master_key),
+    encrypted_name : encryptContent(name, master_key),
     iv : prepareIVforSending(iv)
   };
 }
