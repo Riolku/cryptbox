@@ -9,12 +9,10 @@
     width: 400px;
     height: 500px;
     font-family: var(--font);
-    /* background: rgba(0,0,0,0.5); */
-    /* box-shadow: 0px 0px 10px rgba(0,0,0,0.15); */
     border-radius: 10px;
     left: 50%;
     transform: translate(-50%,0);
-    top: 180px;
+    top: 220px;
 }
 
 .loginHeader {
@@ -23,7 +21,6 @@
     text-align: center;
     top: 0;
     font-size: 32px;
-    /* background: rgba(0,0,0,0.5); */
 }
 
 .errorMessage {
@@ -93,6 +90,5 @@
     padding-bottom: 4%;
     cursor: pointer;
     color: white;
-    /* background: red; */
     background-image: linear-gradient(45deg, #e66465, #9198e5);
 }

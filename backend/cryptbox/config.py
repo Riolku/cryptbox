@@ -7,4 +7,6 @@ def configure_app(app):
 
     app.config.update(secret_config)
 
+    app.secret_key = app.config["SECRET_KEY"]
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
