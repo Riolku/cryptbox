@@ -1,4 +1,4 @@
-import * from './utils';
+import { subtle, decoder, encoder, fromStringToBytes, fromBytesToString, b64encode, b64decode } from './utils';
 
 async function getUserMasterKey(username, password) {
   let salt = deriveBitsFromUsername(username);
@@ -83,3 +83,5 @@ async function deriveKeyFromPasswordAndSalt(password, salt) {
     key, salt, 100000
   );
 }
+
+export { getUserMasterKey, exportMasterKeyForStorage, importMasterKeyFromStorage, prepareMasterKeyForLogin };

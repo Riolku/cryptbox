@@ -7,7 +7,7 @@ import styles from '../styles/Login.module.css';
 
 import post from './post';
 
-import * from '../crypto/user';
+import { getUserMasterKey, exportMasterKeyForStorage, importMasterKeyFromStorage, prepareMasterKeyForLogin } from '../crypto/user';
 
 function login() {
     let [errorMessage, setErrorMessage] = useState('');
@@ -21,23 +21,22 @@ function login() {
         if(username == '') setErrorMessage('Username cannot be empty');
         else if(password == '') setErrorMessage('Password cannot be empty');
         else{
-          let master_key = getUserMasterKey(username, password);
+            let master_key = getUserMasterKey(username, password);
 
+            post('/authenticate', {
+                'username': username,
+                'password': prepareMasterKeyForLogin(master_key)
+            }, data => {
+                if(data['status'] != 'ok') setErrorMessage('Login failed');
+                else{
+                    let storage_string = exportMasterKeyForStorage(master_key);
 
-          post('/authenticate', {
-            'username': username,
-            'password': prepareMasterKeyForLogin(msater_key)
-          }, data => {
-              if(data['status'] != 'ok') setErrorMessage('Login failed');
-              else{
-                  let storage_string = exportMasterKeyForStorage(master_key);
+                    localStorage.setItem('master_key', storage_string);
 
-                  localStorage.setItem('master_key', storage_string);
-
-                  localStorage.setItem('username', username);
-                  window.location.reload();
-              }
-          });
+                    localStorage.setItem('username', username);
+                    window.location.reload();
+                }
+            });
         }
     }
 

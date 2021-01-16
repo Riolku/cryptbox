@@ -7,18 +7,18 @@ function fromStringToBytes(string) {
   return encoder.encode(string);
 }
 
-function fromBytesToString(binary) {
+function fromBytesToString(string) {
   return decoder.decode(string);
 }
 
 function b64encode(string) {
-  byte_string = fromStringToByteString(string);
+  let byte_string = fromStringToByteString(string);
 
   return btoa(byte_string);
 }
 
 function b64decode(string) {
-  byte_string = atob(string);
+    let byte_string = atob(string);
 
   return fromByteStringToString(byte_string);
 }
@@ -44,3 +44,5 @@ function fromByteStringToString(binary) {
 
   return String.fromCharCode(...new Uint16Array(bytes.buffer));
 }
+
+export { subtle, decoder, encoder, fromStringToBytes, fromBytesToString, b64encode, b64decode };
