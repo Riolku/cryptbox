@@ -56,11 +56,17 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function User(){
     const classes = useStyles();
+    const router = useRouter();
 
     const [fvstate, setFVState] = useState("My Files")
 
     const handleListItemClick =(event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: string)=>{
         setFVState(index)
+    }
+
+    function submitLogout() {
+        localStorage.removeItem('/');
+        router.push('/');
     }
 
     return(
@@ -80,7 +86,7 @@ export default function User(){
                         <h1 className = { styles.sidebarText }> TRASH </h1>
                     </ListItem>
                     <Divider />
-                    <ListItem button key={"Logout"} onClick={(ev)=>{useRouter().push("/")}}>
+                    <ListItem button key={"Logout"} onClick={(ev)=>{ () => submitLogout() }}>
                         <ListItemIcon><ExitToAppIcon /></ListItemIcon>
                         <h1 className = { styles.sidebarText }> LOGOUT </h1>
                     </ListItem>
