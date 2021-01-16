@@ -65,7 +65,7 @@ export default function User(){
     }
 
     function submitLogout() {
-        localStorage.removeItem('/');
+        localStorage.removeItem('username');
         router.push('/');
     }
 
