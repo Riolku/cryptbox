@@ -12,16 +12,16 @@ function login() {
         if(username == '') setErrorMessage('Username cannot be empty');
         else if(password == '') setErrorMessage('Password cannot be empty');
         else{
-            fetch('LINK', {
+            fetch('http://167.99.181.60:5000/authenticate', {
                 method: 'POST',
                 credentials: 'include',
                 body: JSON.stringify({
                     'username': username,
-                    
+                    'password': password
                 })
             }).then(ret => ret.json())
             .then(data => {
-
+              console.log(data);
             });
         }
     }
