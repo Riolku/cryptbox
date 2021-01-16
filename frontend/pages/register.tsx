@@ -28,7 +28,7 @@ function Register() {
                 })
             }).then(ret => ret.json())
             .then(data => {
-                if(data['status'] != 'Ok') setErrorMessage('Login failed');
+                if(data['status'] != 'ok') setErrorMessage('Login failed');
                 else{
                     localStorage.setItem('username', username);
                     window.location.reload();

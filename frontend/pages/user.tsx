@@ -7,7 +7,9 @@ import AppsIcon from '@material-ui/icons/Apps';
 import FolderSharedIcon from '@material-ui/icons/FolderShared';
 import DeleteIcon from '@material-ui/icons/Delete';
 
-const drawerWidth = 240;
+import styles from '../styles/User.module.css';
+
+const drawerWidth = 220;
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -30,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
       flexGrow: 1,
       padding: theme.spacing(3),
     },
-  }));
+}));
 
 export default function User(){
 
@@ -43,33 +45,37 @@ export default function User(){
     }
 
     return(
-        //<FilePicker onFile={(file)=>}></FilePicker>
-        <Drawer
-            className={classes.drawer}
-            variant="permanent"
-            classes={{
-                paper: classes.drawerPaper
-            }}>
-            
-            <Toolbar />
-            <div className={classes.drawerContainer}>
-                <List>
-                    <ListItem button selected={fvstate === "Home"} key={"Home"} onClick={(ev)=>{handleListItemClick(ev, "Home")}}>
-                        <ListItemIcon><AppsIcon /></ListItemIcon>
-                        <ListItemText primary={"Home"} />
-                    </ListItem>
-                    <ListItem button selected={fvstate === "Shared"} key={"Shared"} onClick={(ev)=>{handleListItemClick(ev, "Shared")}}>
-                        <ListItemIcon><FolderSharedIcon /></ListItemIcon>
-                        <ListItemText primary={"Shared"} />
-                    </ListItem>
-                    <ListItem button selected={fvstate === "Trash"} key={"Trash"} onClick={(ev)=>{handleListItemClick(ev, "Trash")}}>
-                        <ListItemIcon><DeleteIcon /></ListItemIcon>
-                        <ListItemText primary={"Trash"} />
-                    </ListItem>
-                    <Divider />
-                </List>
-            </div>
+        <div>
+            <Drawer
+                className={classes.drawer}
+                variant="permanent"
+                classes={{
+                    paper: classes.drawerPaper
+                }}>
+                
+                <Toolbar />
+                <div className={classes.drawerContainer}>
+                    <List>
+                        <ListItem button selected={fvstate === "Home"} key={"Home"} onClick={(ev)=>{handleListItemClick(ev, "Home")}}>
+                            <ListItemIcon><AppsIcon /></ListItemIcon>
+                            <h1 className = { styles.sidebarText }> MY FILES </h1>
+                        </ListItem>
+                        <ListItem button selected={fvstate === "Shared"} key={"Shared"} onClick={(ev)=>{handleListItemClick(ev, "Shared")}}>
+                            <ListItemIcon><FolderSharedIcon /></ListItemIcon>
+                            <h1 className = { styles.sidebarText }> SHARED WITH ME</h1>
+                        </ListItem>
+                        <ListItem button selected={fvstate === "Trash"} key={"Trash"} onClick={(ev)=>{handleListItemClick(ev, "Trash")}}>
+                            <ListItemIcon><DeleteIcon /></ListItemIcon>
+                            <h1 className = { styles.sidebarText }> TRASH </h1>
+                        </ListItem>
+                        <Divider />
+                    </List>
+                </div>
+            </Drawer>
 
-        </Drawer>
+            <div className = { styles.userBackground }>
+                
+            </div>
+        </div>
     )
 }

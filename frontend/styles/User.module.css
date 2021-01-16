@@ -1,0 +1,12 @@
+.sidebarText {
+    font-family: var(--font);
+    font-size: 13px;
+}
+
+.userBackground {
+    position: absolute;
+    width: calc(100vw - 220px);
+    height: 100vh;
+    left: 220px;
+    /* background: rgba(0,0,0,0.5); */
+}
