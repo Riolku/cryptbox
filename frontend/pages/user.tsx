@@ -121,11 +121,13 @@ export default function User(){
 
     if(firstTime){
         setFirstTime(false);
+        console.log("CALLING");
         fetch('https://api.cryptbox.kgugeler.ca/user/dirs', {
             method: 'GET',
             credentials: 'include'
         }).then(ret => ret.json())
         .then(data => {
+            console.log(data);
             if(data['status'] != 'ok'){
 
             }else{

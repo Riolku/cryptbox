@@ -2,16 +2,29 @@ import sys
 
 from cryptbox import app
 
+from cryptbox.database.models.users import Users
+
 import cryptbox.server.routes
 
-from flask import request
+from cryptbox.jwtutils import verify_jwt
+
+from flask import g, request
 
 from flask_cors import CORS
 CORS(app)
 
 @app.before_request
 def check_login():
-  print(request.cookie)
+  g.user = None
+  token = request.cookies.get("token")
+  if token is not None:
+    try:
+      obj = verify_jwt(token, app.secret_key)
+      user = Users.query.filter_by(id = obj["id"])
+      if user:
+        g.user = user
+    except:
+      pass
 
 @app.after_request
 def add_cors(response):
