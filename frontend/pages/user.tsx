@@ -19,13 +19,13 @@ const drawerWidth = 300;
 
 const testData = [
     {
-
+        'extension': 'pdf'
     },
     {
-
+        'extension': 'img'
     },
     {
-
+        'extension': 'folder'
     }
 ];
 
@@ -98,7 +98,7 @@ export default function User(){
                 <div className = { styles.filesBackground }>
                     {
                         testData.map((value, index) => {
-                            return <Directory data = { null } isLast = { index == testData.length-1 } />
+                            return <Directory data = { value } isLast = { index == testData.length-1 } />
                         })
                     }
                 </div>
