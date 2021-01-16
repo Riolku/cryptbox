@@ -3,7 +3,7 @@ var subtle = window.crypto.subtle;
 let enc = new TextEncoder();
 
 function importPBKDF2key() {
-  return subtle.importKey(
+  return await subtle.importKey(
     "raw",
     enc.encode(password),
     "PBKDF2",
@@ -13,7 +13,7 @@ function importPBKDF2key() {
 }
 
 async function pbkdf2_deriveKey(key, salt, iterations) {
-  return subtle.deriveKey(
+  return await subtle.deriveKey(
     {
       name : "PBKDF2",
       salt : salt,
@@ -28,9 +28,9 @@ async function pbkdf2_deriveKey(key, salt, iterations) {
 }
 
 async function deriveBitsFromUsername(username) {
-  let key = await importPBKDF2key(salt);
+  let key = importPBKDF2key(salt);
 
-  return subtle.deriveBits(
+  return await subtle.deriveBits(
     {
       name : "PBKDF2",
       salt : enc.encode('username'),
@@ -43,7 +43,7 @@ async function deriveBitsFromUsername(username) {
 }
 
 async function deriveKeyFromPasswordAndSalt(password, salt) {
-  let key = await importPBKDF2key(password);
+  let key = importPBKDF2key(password);
 
   return pbkdf2_deriveKey(
     key, salt, 100000
@@ -51,7 +51,7 @@ async function deriveKeyFromPasswordAndSalt(password, salt) {
 }
 
 async function getUserMasterKey(username, password) {
-  let salt = await deriveBitsFromUsername(username);
+  let salt = deriveBitsFromUsername(username);
 
   return deriveKeyFromPasswordAndSalt(password, salt);
 }
@@ -63,5 +63,7 @@ async function prepareMasterKeyForLogin(master_key) {
     1000
   );
 
-  return subtle.exportKey("jwk", sending_key);
+  let bytes = await subtle.exportKey("raw", sending_key);
+
+  return btoa(bytes);
 }
