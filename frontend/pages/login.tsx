@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 
 import styles from '../styles/Login.module.css';
 
@@ -6,6 +7,8 @@ import post from './post';
 
 function login() {
     let [errorMessage, setErrorMessage] = useState('');
+
+    const router = useRouter();
 
     function submitLogin() {
         let username = (document.getElementById('loginUsernameField') as HTMLInputElement).value;
@@ -18,10 +21,17 @@ function login() {
               'username': username,
               'password': password
             }, data => {
-              console.log(data);
-            })
+                if(data['status'] != 'ok') setErrorMessage('Login failed');
+                else{
+                    localStorage.setItem('username', username);
+                    window.location.reload();
+                }
+            });
         }
     }
+
+    if(process.browser && localStorage.getItem('username') != undefined)
+        router.push('/user');
 
     return (
         <div className = { styles.mainBackground }>

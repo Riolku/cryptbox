@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+
 import styles from '../styles/Login.module.css';
 
-export default function Register() {
+function Register() {
     let [errorMessage, setErrorMessage] = useState('');
+
+    const router = useRouter();
 
     function submitRegister() {
         let username = (document.getElementById('registerUsernameField') as HTMLInputElement).value;
@@ -13,7 +17,7 @@ export default function Register() {
         else if(password == '') setErrorMessage('Password cannot be empty');
         else if(password != repassword) setErrorMessage('Passwords do not match');
         else{
-            fetch('LINK', {
+            fetch('http://167.99.181.60:5000/register', {
                 method: 'POST',
                 credentials: 'include',
                 body: JSON.stringify({
@@ -22,10 +26,17 @@ export default function Register() {
                 })
             }).then(ret => ret.json())
             .then(data => {
-
+                if(data['status'] != 'Ok') setErrorMessage('Login failed');
+                else{
+                    localStorage.setItem('username', username);
+                    window.location.reload();
+                }
             });
         }
     }
+
+    if(process.browser && localStorage.getItem('username') != undefined)
+        router.push('/user');
 
     return (
         <div className = { styles.mainBackground }>
@@ -40,3 +51,5 @@ export default function Register() {
         </div>
     );
 }
+
+export default Register;
