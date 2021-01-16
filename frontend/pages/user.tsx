@@ -165,7 +165,7 @@ export default function User(){
                 </List>
             </div>
             <div className = { styles.userBackground }>
-                <h1 className = { styles.userHeader }> { testUpload } </h1>
+                <h1 className = { styles.userHeader }> { fvstate } </h1>
                 <FilePicker onFile={(file)=>{
                     setUpload(file.name)
                 }}></FilePicker>

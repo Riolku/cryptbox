@@ -1,4 +1,4 @@
-import { subtle, decoder, encoder, fromStringToBytes, fromBytesToString, b64encode, b64decode } from './utils';
+import { decoder, encoder, fromStringToBytes, fromBytesToString, b64encode, b64decode } from './utils';
 
 async function getUserMasterKey(username, password) {
   let salt = deriveBitsFromUsername(username);
@@ -7,7 +7,7 @@ async function getUserMasterKey(username, password) {
 }
 
 async function exportMasterKeyForStorage(master_key) {
-  let bytes = await subtle.exportKey("raw", master_key);
+  let bytes = await window.crypto.subtle.exportKey("raw", master_key);
 
   let byte_string = fromBytesToString(bytes);
 
@@ -19,7 +19,7 @@ async function importMasterKeyFromStorage(storage_string) {
 
   let bytes = fromStringToBytes(decoded_string);
 
-  return await subtle.importKey("raw", bytes);
+  return await window.crypto.subtle.importKey("raw", bytes);
 }
 
 async function prepareMasterKeyForLogin(master_key) {
@@ -29,7 +29,7 @@ async function prepareMasterKeyForLogin(master_key) {
     1000
   );
 
-  let bytes = await subtle.exportKey("raw", sending_key);
+  let bytes = await window.crypto.subtle.exportKey("raw", sending_key);
 
   let byte_string = fromBytesToString(bytes);
 
@@ -41,7 +41,7 @@ async function deriveBitsFromUsername(username) {
 
   console.log(key);
 
-  return subtle.deriveBits(
+  return window.crypto.subtle.deriveBits(
     {
       name : "PBKDF2",
       salt : fromStringToBytes('username'),
@@ -62,7 +62,7 @@ async function deriveKeyFromPasswordAndSalt(password, salt) {
 }
 
 async function pbkdf2_deriveKey(key, salt, iterations) {
-  return subtle.deriveKey(
+  return window.crypto.subtle.deriveKey(
     {
       name : "PBKDF2",
       salt : salt,
@@ -77,7 +77,7 @@ async function pbkdf2_deriveKey(key, salt, iterations) {
 }
 
 async function importPBKDF2key(key_material) {
-  return subtle.importKey(
+  return window.crypto.subtle.importKey(
     "raw",
     fromStringToBytes(key_material),
     "PBKDF2",

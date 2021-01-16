@@ -32,7 +32,13 @@ function fromStringToByteString(string) {
     codeUnits[i] = string.charCodeAt(i);
   }
 
-  return String.fromCharCode(...new Uint8Array(codeUnits.buffer));
+  let res = '';
+  for(let i=0; i<codeUnits.length; i++){
+      res += String.fromCharCode(codeUnits[i]>>8);
+      res += String.fromCharCode(codeUnits[i]&((1<<8)-1));
+  }
+
+  return res;
 }
 
 function fromByteStringToString(binary) {
@@ -42,7 +48,11 @@ function fromByteStringToString(binary) {
     bytes[i] = binary.charCodeAt(i);
   }
 
-  return String.fromCharCode(...new Uint16Array(bytes.buffer));
+  let res = '';
+  for(let i=0; i<bytes.length; i+=2)
+      res += String.fromCharCode((bytes[i]<<1)|bytes[i+1]);
+
+  return res;
 }
 
-export { subtle, decoder, encoder, fromStringToBytes, fromBytesToString, b64encode, b64decode };
+export { decoder, encoder, fromStringToBytes, fromBytesToString, b64encode, b64decode };

@@ -7,8 +7,8 @@ import styles from '../styles/Login.module.css';
 
 import post from './post';
 
-import * from '../crypto/user';
-import * from '../crypto/files';
+import { getUserMasterKey, exportMasterKeyForStorage, importMasterKeyFromStorage, prepareMasterKeyForLogin } from '../crypto/user';
+import { newDirectory, encryptContent, newIV, loadIVfromResponse, prepareIVforSending } from '../crypto/files';
 
 function Register() {
     let [errorMessage, setErrorMessage] = useState('');
@@ -30,22 +30,22 @@ function Register() {
                 'username': username,
                 'password': prepareMasterKeyForLogin(master_key),
                 'home' : newDirectory("Home", master_key),
-                'trash' : newDirectory("Trash", master_key);
+                'trash' : newDirectory("Trash", master_key)
             }, data => {
                 if(data['status'] != 'ok') setErrorMessage('Login failed');
                 else{
                     let storage_string = exportMasterKeyForStorage(master_key);
-
-                    localStorage.setItem('master_key', storage_string);
-
-                    localStorage.setItem('username', username);
-                    window.location.reload();
+                    storage_string.then(res => {
+                        localStorage.setItem('master_key', res);
+                        localStorage.setItem('username', username);
+                        window.location.reload();
+                    });
                 }
             });
         }
     }
 
-    if(process.browser && localStorage.getItem('username') != undefined)
+    if(process.browser && localStorage.getItem('master_key') != undefined)
         router.push('/user');
 
     return (
