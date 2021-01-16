@@ -13,7 +13,7 @@
 
 .userHeader {
     position: absolute;
-    left: 3%;
+    left: 3.5%;
     top: 1%;
     font-size: 30px;
     font-family: var(--font);
@@ -24,7 +24,7 @@
 .filesBackground {
     /* background: rgba(0,0,0,0.5); */
     position: absolute;
-    top: 12%;
+    top: 10%;
     width: 92%;
     left: 3.5%;
     height: 10%;
