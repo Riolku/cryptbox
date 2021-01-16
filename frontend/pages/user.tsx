@@ -86,7 +86,7 @@ export default function User(){
                         <h1 className = { styles.sidebarText }> TRASH </h1>
                     </ListItem>
                     <Divider />
-                    <ListItem button key={"Logout"} onClick={(ev)=>{ () => submitLogout() }}>
+                    <ListItem button key={"Logout"} onClick = { submitLogout }>
                         <ListItemIcon><ExitToAppIcon /></ListItemIcon>
                         <h1 className = { styles.sidebarText }> LOGOUT </h1>
                     </ListItem>
