@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
-//import 'dotenv/config';
-
 import Navbar from '../components/Navbar';
 
 import styles from '../styles/Login.module.css';

@@ -14,7 +14,19 @@ import Navbar from '../components/Navbar';
 
 import styles from '../styles/User.module.css';
 
-const drawerWidth = 220;
+const drawerWidth = 300;
+
+const testData = [
+    {
+
+    },
+    {
+
+    },
+    {
+
+    }
+];
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,58 +49,56 @@ const useStyles = makeStyles((theme: Theme) =>
     content: {
       flexGrow: 1,
       backgroundColor: theme.palette.background.default,
-      paddingLeft: 245,
+      paddingLeft: 285,
     },
   }),
 );
 
 export default function User(){
-
     const classes = useStyles();
 
-    const [fvstate, setFVState] = useState("Home")
+    const [fvstate, setFVState] = useState("My Files")
 
     const handleListItemClick =(event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: string)=>{
         setFVState(index)
     }
 
     return(
-        //<FilePicker onFile={(file)=>}></FilePicker>
         <div>
-            <Drawer
-                className={classes.drawer}
-                variant="permanent"
-                classes={{
-                    paper: classes.drawerPaper
-                }}>
-                
-                <div className={classes.toolbar }>
-                    <List>
-                        <ListItem button selected={fvstate === "Home"} key={"Home"} onClick={(ev)=>{handleListItemClick(ev, "Home")}}>
-                            <ListItemIcon><AppsIcon /></ListItemIcon>
-                            <h1 className = { styles.sidebarText }> MY FILES </h1>
-                        </ListItem>
-                        <ListItem button selected={fvstate === "Shared"} key={"Shared"} onClick={(ev)=>{handleListItemClick(ev, "Shared")}}>
-                            <ListItemIcon><FolderSharedIcon /></ListItemIcon>
-                            <h1 className = { styles.sidebarText }> SHARED WITH ME </h1>
-                        </ListItem>
-                        <ListItem button selected={fvstate === "Trash"} key={"Trash"} onClick={(ev)=>{handleListItemClick(ev, "Trash")}}>
-                            <ListItemIcon><DeleteIcon /></ListItemIcon>
-                            <h1 className = { styles.sidebarText }> TRASH </h1>
-                        </ListItem>
-                        <Divider />
-                        <ListItem button key={"Logout"} onClick={(ev)=>{useRouter().push("/")}}>
-                            <ListItemIcon><ExitToAppIcon /></ListItemIcon>
-                            <h1 className = { styles.sidebarText }> LOGOUT </h1>
-                        </ListItem>
-                    </List>
+            <div style = {{ position: 'fixed', left: 0, height: '100vh', width: '230px', top: '-9px', background: 'rgba(0,0,0,0.02)' }}>
+                <List>
+                    <ListItem button selected={fvstate === "My Files"} key={"My Files"} onClick={(ev)=>{handleListItemClick(ev, "My Files")}}>
+                        <ListItemIcon><AppsIcon /></ListItemIcon>
+                        <h1 className = { styles.sidebarText }> MY FILES </h1>
+                    </ListItem>
+                    <ListItem button selected={fvstate === "Shared With Me"} key={"Shared With Me"} onClick={(ev)=>{handleListItemClick(ev, "Shared With Me")}}>
+                        <ListItemIcon><FolderSharedIcon /></ListItemIcon>
+                        <h1 className = { styles.sidebarText }> SHARED WITH ME </h1>
+                    </ListItem>
+                    <ListItem button selected={fvstate === "Trash"} key={"Trash"} onClick={(ev)=>{handleListItemClick(ev, "Trash")}}>
+                        <ListItemIcon><DeleteIcon /></ListItemIcon>
+                        <h1 className = { styles.sidebarText }> TRASH </h1>
+                    </ListItem>
+                    <Divider />
+                    <ListItem button key={"Logout"} onClick={(ev)=>{useRouter().push("/")}}>
+                        <ListItemIcon><ExitToAppIcon /></ListItemIcon>
+                        <h1 className = { styles.sidebarText }> LOGOUT </h1>
+                    </ListItem>
+                </List>
+            </div>
+            <div className = { styles.userBackground }>
+                <h1 className = { styles.userHeader }> { fvstate } </h1>
+                <div className = { styles.filesBackground }>
+                    {
+                        testData.map((value, index) => {
+                            return (
+                                <div className = { styles.fileEntryContainer } style = {{ borderBottom: index==testData.length-1?'1px solid rgba(0,0,0,0.2)':0 }}>
+                                </div>
+                            )
+                        })
+                    }
                 </div>
-            </Drawer>
-            <main className={classes.content}>
-                <div className={classes.toolbar}>
-                    <p>{fvstate}</p>
-                </div>
-            </main>
+            </div>
         </div>
     )
 }
