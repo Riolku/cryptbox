@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
-//import 'dotenv/config';
-
 import Navbar from '../components/Navbar';
 
 import styles from '../styles/Login.module.css';
@@ -39,7 +37,7 @@ function login() {
 
     return (
         <div>
-            <Navbar />
+            <Navbar linkCol = 'black' />
             <div className = { styles.mainBackground }>
                 <div className = { styles.loginBox }>
                     <h1 className = { styles.loginHeader }> LOGIN </h1>
