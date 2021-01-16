@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
+import Navbar from '../components/Navbar';
+
 import styles from '../styles/Login.module.css';
 
 function login() {
@@ -37,13 +39,16 @@ function login() {
         router.push('/user');
 
     return (
-        <div className = { styles.mainBackground }>
-            <div className = { styles.loginBox }>
-                <h1 className = { styles.loginHeader }> LOGIN </h1>
-                <h1 className = { styles.errorMessage }> { errorMessage } </h1>
-                <input id = 'loginUsernameField' className = { styles.loginUsernameField } placeholder = 'Username' />
-                <input id = 'loginPasswordField' className = { styles.loginPasswordField } placeholder = 'Password' />
-                <button className = { styles.loginSubmitButton } onClick = { submitLogin }> SUBMIT </button>
+        <div>
+            <Navbar />
+            <div className = { styles.mainBackground }>
+                <div className = { styles.loginBox }>
+                    <h1 className = { styles.loginHeader }> LOGIN </h1>
+                    <h1 className = { styles.errorMessage }> { errorMessage } </h1>
+                    <input id = 'loginUsernameField' className = { styles.loginUsernameField } placeholder = 'Username' />
+                    <input id = 'loginPasswordField' className = { styles.loginPasswordField } placeholder = 'Password' />
+                    <button className = { styles.loginSubmitButton } onClick = { submitLogin }> SUBMIT </button>
+                </div>
             </div>
         </div>
     );

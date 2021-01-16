@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
+import Navbar from '../components/Navbar';
+
 import styles from '../styles/Login.module.css';
 
 function Register() {
@@ -39,14 +41,17 @@ function Register() {
         router.push('/user');
 
     return (
-        <div className = { styles.mainBackground }>
-            <div className = { styles.loginBox }>
-                <h1 className = { styles.loginHeader }> REGISTER </h1>
-                <h1 className = { styles.errorMessage }> { errorMessage } </h1>
-                <input id = 'registerUsernameField' className = { styles.loginUsernameField } placeholder = 'Username' />
-                <input id = 'registerPasswordField' className = { styles.loginPasswordField } placeholder = 'Password' />
-                <input id = 'registerConfirmPasswordField' className = { styles.loginPasswordField } placeholder = 'Confirm Password' style = {{ top: '46%' }} />
-                <button className = { styles.loginSubmitButton } style = {{ top: '61%' }} onClick = { submitRegister }> Register </button>
+        <div>
+            <Navbar />
+            <div className = { styles.mainBackground }>
+                <div className = { styles.loginBox }>
+                    <h1 className = { styles.loginHeader }> REGISTER </h1>
+                    <h1 className = { styles.errorMessage }> { errorMessage } </h1>
+                    <input id = 'registerUsernameField' className = { styles.loginUsernameField } placeholder = 'Username' />
+                    <input id = 'registerPasswordField' className = { styles.loginPasswordField } placeholder = 'Password' />
+                    <input id = 'registerConfirmPasswordField' className = { styles.loginPasswordField } placeholder = 'Confirm Password' style = {{ top: '46%' }} />
+                    <button className = { styles.loginSubmitButton } style = {{ top: '61%' }} onClick = { submitRegister }> Register </button>
+                </div>
             </div>
         </div>
     );
