@@ -6,26 +6,26 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import styles from '../styles/Directory.module.css';
 
 interface DirectoryProps {
-    file_type: string,
-    parent: string,
-    encrypted_name: string,
-    modified: string
+    data: Object,
+    isLast: boolean
 }
 
-export default function Directory({file_type, parent, encrypted_name, modified}: DirectoryProps){
-
-    var typeIcon;
-    if(file_type === "directory"){
-        typeIcon = <FolderIcon />
-    } else if(file_type === "file"){
-        typeIcon = <DescriptionIcon />
-    }
+export default function Directory({data, isLast}: DirectoryProps){
+    var typeIcon = null;
+    // if(file_type === "directory"){
+    //     typeIcon = <FolderIcon />
+    // } else if(file_type === "file"){
+    //     typeIcon = <DescriptionIcon />
+    // }
 
     return(
-        <div className={styles.fileEntryContainer}>
-            <div className={styles.fileEntryComponent}>{typeIcon}</div>
-            <div className={styles.fileEntryComponent}><h1>{encrypted_name}</h1></div>
-            <div className={styles.fileEntryComponent}><p>{modified}</p></div>
+        <div className = { styles.fileEntryContainer } style = {{ borderBottom: isLast?'1px solid #00000033':'' }}>
+            <div className = { styles.fileEntryComponent } style = {{ width: '2%' }}> a </div>
+            <h1 className = { styles.fileEntryComponent } style = {{ width: '40%' }}> File Name </h1>
+
+            <h1 className = { styles.fileEntryComponentRight } style = {{ width: '10%' }}> Date Uploaded </h1>
+            <h1 className = { styles.fileEntryComponentRight } style = {{ width: '10%' }}> Last Modified </h1>
+            <h1 className = { styles.fileEntryComponentRight } style = {{ width: '6%' }}> Extension </h1>
         </div>
     )
 }

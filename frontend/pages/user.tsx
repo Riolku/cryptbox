@@ -96,7 +96,11 @@ export default function User(){
             <div className = { styles.userBackground }>
                 <h1 className = { styles.userHeader }> { fvstate } </h1>
                 <div className = { styles.filesBackground }>
-                    <Directory file_type="file" parent="test" encrypted_name="test" modified="a"/>
+                    {
+                        testData.map((value, index) => {
+                            return <Directory data = { null } isLast = { index == testData.length-1 } />
+                        })
+                    }
                 </div>
             </div>
         </div>
