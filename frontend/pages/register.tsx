@@ -22,7 +22,7 @@ export default function Register() {
                 })
             }).then(ret => ret.json())
             .then(data => {
-
+               
             });
         }
     }
