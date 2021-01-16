@@ -1,6 +1,6 @@
 from .utils import wrap_request
 
-import argon2, json
+import argon2, json, time
 
 from flask import request, Response, g
 
@@ -16,5 +16,6 @@ def authenticate():
   if u is None:
     return {"status": "fail", "error": ""}
   if u.password_hash == argon2.argon2_hash(request.json["password"], u.salt):
-    g.setdefault("cookies", {})["token"] = make_jwt(u.id, app.config["SECRET_KEY"])
+    g.setdefault("cookies", {})["token"] = make_jwt({"uid": u.id, "at": int(time.time()), "exp": int(time.time()) + 604800}, app.config["SECRET_KEY"])
     return {"status": "ok", "username": u.username}
+  return {"status": "fail", "error": ""}

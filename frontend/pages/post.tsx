@@ -1,5 +1,5 @@
 function post(url, body, callback) {
-  fetch('http://167.99.181.60:5000' + url, {
+  fetch('https://api.cryptbox.kgugeler.ca' + url, {
     method: 'POST',
     credentials: 'include',
     headers: {

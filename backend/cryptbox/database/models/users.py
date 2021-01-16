@@ -11,7 +11,7 @@ class Users(db.Model):
 
     username = dbcol(dbstr(USERNAME_MAX_LENGTH), unique = True, nullable = False)
     password_hash = dbcol(dbbinary, nullable = False)
-    salt = dbcol(dbstr(SALT_MAX_LENGTH), nullable = False)
+    salt = dbcol(dbbinary, nullable = False)
 
     encrypted_private_key = dbcol(dbstr(KEY_MAX_LENGTH), nullable = False)
     public_key = dbcol(dbstr(KEY_MAX_LENGTH), nullable = False)

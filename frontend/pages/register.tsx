@@ -5,6 +5,8 @@ import Navbar from '../components/Navbar';
 
 import styles from '../styles/Login.module.css';
 
+import post from './post';
+
 function Register() {
     let [errorMessage, setErrorMessage] = useState('');
 
@@ -19,15 +21,10 @@ function Register() {
         else if(password == '') setErrorMessage('Password cannot be empty');
         else if(password != repassword) setErrorMessage('Passwords do not match');
         else{
-            fetch('/register', {
-                method: 'POST',
-                credentials: 'include',
-                body: JSON.stringify({
-                    'username': username,
-                    'password': password
-                })
-            }).then(ret => ret.json())
-            .then(data => {
+            post('/register', {
+                'username': username,
+                'password': password
+            }, data => {
                 if(data['status'] != 'ok') setErrorMessage('Login failed');
                 else{
                     localStorage.setItem('username', username);
