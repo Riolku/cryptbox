@@ -12,13 +12,13 @@ function fromBytesToString(binary) {
 }
 
 function b64encode(string) {
-  byte_string = fromStringToByteString(string);
+  let byte_string = fromStringToByteString(string);
 
   return btoa(byte_string);
 }
 
 function b64decode(string) {
-  byte_string = atob(string);
+  let byte_string = atob(string);
 
   return fromByteStringToString(byte_string);
 }
@@ -29,8 +29,6 @@ function fromStringToByteString(string) {
   for (let i = 0; i < codeUnits.length; i++) {
     codeUnits[i] = string.charCodeAt(i);
   }
-
-  console.log(codeUnits);
 
   return String.fromCharCode(...new Uint8Array(codeUnits.buffer));
 }
