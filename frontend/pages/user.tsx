@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) =>
     content: {
       flexGrow: 1,
       backgroundColor: theme.palette.background.default,
-      padding: theme.spacing(3),
+      paddingLeft: 245,
     },
   }),
 );
@@ -86,7 +86,7 @@ export default function User(){
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.toolbar}>
-                    <p></p>
+                    <p>{fvstate}</p>
                 </div>
             </main>
         </div>

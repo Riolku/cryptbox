@@ -19,7 +19,7 @@ function Register() {
         else if(password == '') setErrorMessage('Password cannot be empty');
         else if(password != repassword) setErrorMessage('Passwords do not match');
         else{
-            fetch(process.env.HOST + '/register', {
+            fetch('/register', {
                 method: 'POST',
                 credentials: 'include',
                 body: JSON.stringify({
