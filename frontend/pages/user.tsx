@@ -1,20 +1,26 @@
 import Head from 'next/head';
-import FilePicker from '../components/FilePicker';
 import { useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles';
+import { useRouter } from 'next/router';
+
+import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { Drawer, Toolbar, List, Typography, Divider, ListItem, ListItemIcon, ListItemText } from '@material-ui/core'
 import AppsIcon from '@material-ui/icons/Apps';
 import FolderSharedIcon from '@material-ui/icons/FolderShared';
 import DeleteIcon from '@material-ui/icons/Delete';
 
+import FilePicker from '../components/FilePicker';
+import Navbar from '../components/Navbar';
+
 const drawerWidth = 240;
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
     root: {
       display: 'flex',
     },
     appBar: {
-      zIndex: theme.zIndex.drawer + 1,
+      width: `calc(100% - ${drawerWidth}px)`,
+      marginLeft: drawerWidth,
     },
     drawer: {
       width: drawerWidth,
@@ -23,14 +29,15 @@ const useStyles = makeStyles((theme) => ({
     drawerPaper: {
       width: drawerWidth,
     },
-    drawerContainer: {
-      overflow: 'auto',
-    },
+    // necessary for content to be below app bar
+    toolbar: theme.mixins.toolbar,
     content: {
       flexGrow: 1,
+      backgroundColor: theme.palette.background.default,
       padding: theme.spacing(3),
     },
-  }));
+  }),
+);
 
 export default function User(){
 
@@ -44,32 +51,41 @@ export default function User(){
 
     return(
         //<FilePicker onFile={(file)=>}></FilePicker>
-        <Drawer
-            className={classes.drawer}
-            variant="permanent"
-            classes={{
-                paper: classes.drawerPaper
-            }}>
-            
-            <Toolbar />
-            <div className={classes.drawerContainer}>
-                <List>
-                    <ListItem button selected={fvstate === "Home"} key={"Home"} onClick={(ev)=>{handleListItemClick(ev, "Home")}}>
-                        <ListItemIcon><AppsIcon /></ListItemIcon>
-                        <ListItemText primary={"Home"} />
-                    </ListItem>
-                    <ListItem button selected={fvstate === "Shared"} key={"Shared"} onClick={(ev)=>{handleListItemClick(ev, "Shared")}}>
-                        <ListItemIcon><FolderSharedIcon /></ListItemIcon>
-                        <ListItemText primary={"Shared"} />
-                    </ListItem>
-                    <ListItem button selected={fvstate === "Trash"} key={"Trash"} onClick={(ev)=>{handleListItemClick(ev, "Trash")}}>
-                        <ListItemIcon><DeleteIcon /></ListItemIcon>
-                        <ListItemText primary={"Trash"} />
-                    </ListItem>
-                    <Divider />
-                </List>
-            </div>
-
-        </Drawer>
+        <div>
+            <Drawer
+                className={classes.drawer}
+                variant="permanent"
+                classes={{
+                    paper: classes.drawerPaper
+                }}>
+                
+                <div className={classes.toolbar }>
+                    <List>
+                        <ListItem button selected={fvstate === "Home"} key={"Home"} onClick={(ev)=>{handleListItemClick(ev, "Home")}}>
+                            <ListItemIcon><AppsIcon /></ListItemIcon>
+                            <ListItemText primary={"Home"} />
+                        </ListItem>
+                        <ListItem button selected={fvstate === "Shared"} key={"Shared"} onClick={(ev)=>{handleListItemClick(ev, "Shared")}}>
+                            <ListItemIcon><FolderSharedIcon /></ListItemIcon>
+                            <ListItemText primary={"Shared"} />
+                        </ListItem>
+                        <ListItem button selected={fvstate === "Trash"} key={"Trash"} onClick={(ev)=>{handleListItemClick(ev, "Trash")}}>
+                            <ListItemIcon><DeleteIcon /></ListItemIcon>
+                            <ListItemText primary={"Trash"} />
+                        </ListItem>
+                        <Divider />
+                        <ListItem button key={"Logout"} onClick={(ev)=>{useRouter().push("/")}}>
+                            <ListItemIcon></ListItemIcon>
+                            <ListItemText primary={"Logout"}/>
+                        </ListItem>
+                    </List>
+                </div>
+            </Drawer>
+            <main className={classes.content}>
+                <div className={classes.toolbar}>
+                    <p></p>
+                </div>
+            </main>
+        </div>
     )
 }
