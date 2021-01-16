@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
+import * as dotenv from 'dotenv';
+
+import Navbar from '../components/Navbar';
+
 import styles from '../styles/Login.module.css';
 
 function Register() {
+    dotenv.config()
+
     let [errorMessage, setErrorMessage] = useState('');
 
     const router = useRouter();
@@ -17,7 +23,7 @@ function Register() {
         else if(password == '') setErrorMessage('Password cannot be empty');
         else if(password != repassword) setErrorMessage('Passwords do not match');
         else{
-            fetch('http://167.99.181.60:5000/register', {
+            fetch(process.env.HOST + '/register', {
                 method: 'POST',
                 credentials: 'include',
                 body: JSON.stringify({
@@ -39,14 +45,17 @@ function Register() {
         router.push('/user');
 
     return (
-        <div className = { styles.mainBackground }>
-            <div className = { styles.loginBox }>
-                <h1 className = { styles.loginHeader }> REGISTER </h1>
-                <h1 className = { styles.errorMessage }> { errorMessage } </h1>
-                <input id = 'registerUsernameField' className = { styles.loginUsernameField } placeholder = 'Username' />
-                <input id = 'registerPasswordField' className = { styles.loginPasswordField } placeholder = 'Password' />
-                <input id = 'registerConfirmPasswordField' className = { styles.loginPasswordField } placeholder = 'Confirm Password' style = {{ top: '46%' }} />
-                <button className = { styles.loginSubmitButton } style = {{ top: '61%' }} onClick = { submitRegister }> Register </button>
+        <div>
+            <Navbar />
+            <div className = { styles.mainBackground }>
+                <div className = { styles.loginBox }>
+                    <h1 className = { styles.loginHeader }> REGISTER </h1>
+                    <h1 className = { styles.errorMessage }> { errorMessage } </h1>
+                    <input id = 'registerUsernameField' className = { styles.loginUsernameField } placeholder = 'Username' />
+                    <input id = 'registerPasswordField' className = { styles.loginPasswordField } placeholder = 'Password' />
+                    <input id = 'registerConfirmPasswordField' className = { styles.loginPasswordField } placeholder = 'Confirm Password' style = {{ top: '46%' }} />
+                    <button className = { styles.loginSubmitButton } style = {{ top: '61%' }} onClick = { submitRegister }> Register </button>
+                </div>
             </div>
         </div>
     );
