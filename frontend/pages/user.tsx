@@ -82,7 +82,6 @@ export default function User(){
     const router = useRouter();
 
     const [fvstate, setFVState] = useState("My Files");
-    const [testUpload, setUpload] = useState("")
 
     let [currentFolder, setCurrentFolder] = useState(0);
     let [parentFolder, setParentFolder] = useState(0);
@@ -98,6 +97,10 @@ export default function User(){
     function submitLogout() {
         localStorage.removeItem('username');
         router.push('/');
+    }
+
+    function handleUpload(file){
+        
     }
 
     useEffect(() => {
@@ -167,7 +170,7 @@ export default function User(){
             <div className = { styles.userBackground }>
                 <h1 className = { styles.userHeader }> { fvstate } </h1>
                 <FilePicker onFile={(file)=>{
-                    setUpload(file.name)
+                    handleUpload(file.name)
                 }}></FilePicker>
                 <div className = { styles.filesBackground }>
                     <Directory data = { null } changeDirectory = { null } isFirst = { true } isLast = { false } />

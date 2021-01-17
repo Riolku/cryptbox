@@ -23,8 +23,8 @@
 
 .headerUI {
     position: absolute;
-    right: 3.5%;
-    top: 2%;
+    left: 89%;
+    top: 3.5%;
     font-size: 30px;
     font-family: var(--font);
     padding: 0.5%;
