@@ -1,17 +1,13 @@
-// if(process.browser) {
-//   var decoder = new TextDecoder();
-//   var encoder = new TextEncoder();
-// }
-
-var decoder = new TextDecoder();
-var encoder = new TextEncoder();
+if(process.browser) {
+  var decoder = new TextDecoder();
+  var encoder = new TextEncoder();
+}
 
 function fromStringToBytes(string) {
   return encoder.encode(string);
 }
 
 function fromBytesToString(string) {
-    console.log("OK", decoder);
   return decoder.decode(string);
 }
 
