@@ -20,6 +20,7 @@ const mappedIcon = {
 
 interface DirectoryProps {
     data: Object,
+    chooseFile: Function,
     changeDirectory: Function,
     isFirst: boolean,
     isLast: boolean
@@ -33,14 +34,17 @@ function cont(value, dict) {
     return false;
 }
 
-export default function Directory({data, changeDirectory, isFirst, isLast}: DirectoryProps){
+export default function Directory({data, chooseFile, changeDirectory, isFirst, isLast}: DirectoryProps){
     const router = useRouter();
 
     function selectFile() {
         if(data['extension'] == 'folder'){
             console.log("CLICKED");
             changeDirectory({ 'name': data['name'], 'id': data['id'] });
-        }else router.push('/user/file/' + data['id']);
+        }else{
+            console.log("CLICKED FILE");
+            chooseFile(data);
+        }
     }
 
     if(isFirst){

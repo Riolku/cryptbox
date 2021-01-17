@@ -10,7 +10,7 @@ import AttachFileIcon from '@material-ui/icons/AttachFile';
 
 import styles from '../styles/FileInfo.module.css';
 
-import getreq from './request-utils';
+import { getreq, postreq } from '../pages/request-utils';
 
 const mappedIcon = {
     'folder': <FolderIcon className = { styles.bigImageIcon } style = {{ fontSize: 100 }} />,
@@ -41,32 +41,46 @@ function splitString(str, c) {
     return ret;
 }
 
-const fileInfo = ({ closeInfo }: { closeInfo: Function }) => {
+function getExtension(name) {
+    let idx = name.length-1;
+    for(let i=name.length-1; i>=0; i--){
+        if(name[i] == '.'){
+            idx = i;
+            break;
+        }
+    }
+    let res = '';
+    for(let i=idx+1; i<name.length; i++)
+        res += name[i];
+    return res;
+}
+
+const fileInfo = ({ fileInfo, closeInfo }: { fileInfo: Object, closeInfo: Function }) => {
     let [firstTime, setFirstTime] = useState(true);
     let [errorMessage, setErrorMessage] = useState('');
     let [data, setData] = useState({'extension': 'png'});
 
-    const router = useRouter();
+    // const router = useRouter();
 
     function closeBox() {
         closeInfo();
     }
 
-    let urlPath = splitString(router.pathname, '/');
-    if(urlPath.length != 3){ //file does not exist
-        return null;
-    }
+    // let urlPath = splitString(router.pathname, '/');
+    // if(urlPath.length != 3){ //file does not exist
+    //     return null;
+    // }
 
-    if(firstTime){
-        setFirstTime(false);
-        getreq('/file/' + urlPath[2], data => {
-            if(data['status'] != 'ok') setErrorMessage(data['status']);
-            else setData(data);
-        });
-    }
+    // if(firstTime){
+    //     setFirstTime(false);
+    //     getreq('/file/' + urlPath[2], data => {
+    //         if(data['status'] != 'ok') setErrorMessage(data['status']);
+    //         else setData(data);
+    //     });
+    // }
 
-    let typeIcon = cont(data['extension'], mappedIcon)?mappedIcon[data['extension']]:<AttachFileIcon className = { styles.bigImageIcon } style = {{ fontSize: 100 }} />;
-
+    let typeIcon = cont(fileInfo['extension'], mappedIcon)?mappedIcon[fileInfo['extension']]:<AttachFileIcon className = { styles.bigImageIcon } style = {{ fontSize: 100 }} />;
+    console.log("YES", fileInfo);
     return (
         <div className = { styles.fileInfoBackground } onClick = { closeBox }>
             <div className = { styles.fileBackground }>
@@ -74,32 +88,32 @@ const fileInfo = ({ closeInfo }: { closeInfo: Function }) => {
                     { typeIcon }
                 </div>
                 <div className = { styles.fileInfo }>
-                    <div className = { styles.fileInfoHeader }> File Name </div>
+                    <div className = { styles.fileInfoHeader }> { fileInfo['name'] } </div>
                     <div className = { styles.fileInfoHeader } style = {{ paddingTop: 0, paddingBottom: '4%', fontSize: '15px', fontFamily: 'var(--bold-font)' }}> Details </div>
 
-                    <div className = { styles.fileInfoEntry }>
+                    {/* <div className = { styles.fileInfoEntry }>
                         <h1 className = { styles.fileInfoEntryHeader }> Owner </h1>
-                        <h1 className = { styles.fileInfoEntryEntry }> pepega </h1>
-                    </div>
+                        <h1 className = { styles.fileInfoEntryEntry }> { fileInfo['owner'] } </h1>
+                    </div> */}
 
                     <div className = { styles.fileInfoEntry }>
                         <h1 className = { styles.fileInfoEntryHeader }> Date Uploaded </h1>
-                        <h1 className = { styles.fileInfoEntryEntry }> 12/30/2021 12:01 PM </h1>
+                        <h1 className = { styles.fileInfoEntryEntry }> { fileInfo['created'] + ' ' + fileInfo['created_time'] } </h1>
                     </div>
 
                     <div className = { styles.fileInfoEntry }>
                         <h1 className = { styles.fileInfoEntryHeader }> Last Modified </h1>
-                        <h1 className = { styles.fileInfoEntryEntry }> 12/30/2021 12:01 PM </h1>
+                        <h1 className = { styles.fileInfoEntryEntry }> { fileInfo['modified'] + ' ' + fileInfo['modified_time'] } </h1>
                     </div>
 
-                    <div className = { styles.fileInfoEntry }>
+                    {/* <div className = { styles.fileInfoEntry }>
                         <h1 className = { styles.fileInfoEntryHeader }> File Size </h1>
                         <h1 className = { styles.fileInfoEntryEntry }> 208 Bytes </h1>
-                    </div>
+                    </div> */}
 
                     <div className = { styles.fileInfoEntry }>
                         <h1 className = { styles.fileInfoEntryHeader }> Extension </h1>
-                        <h1 className = { styles.fileInfoEntryEntry }> pdf </h1>
+                        <h1 className = { styles.fileInfoEntryEntry }> { getExtension(fileInfo['name']) } </h1>
                     </div>
                 </div>
             </div>
