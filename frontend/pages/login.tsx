@@ -48,6 +48,12 @@ function login() {
         }
     }
 
+    function enterSubmit(e) {
+        if(e.key == 'Enter'){
+            submitLogin();
+        }
+    }
+
     if(process.browser && localStorage.getItem('master_key') != undefined)
         router.push('/user');
 
@@ -59,8 +65,8 @@ function login() {
                 <div className = { styles.loginBox }>
                     <h1 className = { styles.loginHeader }> LOGIN </h1>
                     <h1 className = { styles.errorMessage }> { errorMessage } </h1>
-                    <input id = 'loginUsernameField' className = { styles.loginUsernameField } placeholder = 'Username' />
-                    <input id = 'loginPasswordField' className = { styles.loginPasswordField } placeholder = 'Password' type="password" />
+                    <input id = 'loginUsernameField' className = { styles.loginUsernameField } placeholder = 'Username' onKeyDown = { enterSubmit } />
+                    <input id = 'loginPasswordField' className = { styles.loginPasswordField } placeholder = 'Password' type="password" onKeyDown = { enterSubmit } />
                     <button className = { styles.loginSubmitButton } onClick = { submitLogin }> SUBMIT </button>
                 </div>
             </div>

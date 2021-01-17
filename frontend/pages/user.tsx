@@ -61,6 +61,20 @@ function splitString(str, c) {
     return ret;
 }
 
+function getExtension(name) {
+    let idx = name.length-1;
+    for(let i=name.length-1; i>=0; i--){
+        if(name[i] == '.'){
+            idx = i;
+            break;
+        }
+    }
+    let res = '';
+    for(let i=idx+1; i<name.length; i++)
+        res += name[i];
+    return res;
+}
+
 function prependZero(num) {
     if(num <= 9) return '0' + num;
     return num;
@@ -79,7 +93,7 @@ function changeToTime(epoch) {
 export default function User() {
     const router = useRouter();
 
-    const [fvstate, setFVState] = useState("My Files");
+    const [fvstate, setFVState] = useState("");
     const [uploadedFile, setUpload] = useState(null)
 
     const [username, setUsername] = useState("")
@@ -177,15 +191,16 @@ export default function User() {
         for(let file of children['files']){
             console.log("FILE", file);
             let file_iv = loadIVfromResponse(file['name_iv']);
+            let name = fromBytesToString(await decryptContent(file['encrypted_name'], master_key, file_iv));
             ret.push(
                 {
                     'id': file['id'],
-                    'name': fromBytesToString(await decryptContent(file['encrypted_name'], master_key, file_iv)),
+                    'name': name,
                     'modified': changeToDate(file['modified']),
                     'modified_time': changeToTime(file['modified']),
                     'created': changeToDate(file['created']),
                     'created_time': changeToTime(file['created']),
-                    'extension': 'file'
+                    'extension': getExtension(name)
                 }
             );
         }
@@ -213,7 +228,10 @@ export default function User() {
                     temp.push(currentFolder);
                     setFolderPath(temp);
                 }else setFolderPath(temp);
-            }else setFolderPath([{'name': fvstate, 'id': baseDirectoryIDs[fvstate] }]);
+            }else{
+                console.log("bruga", baseDirectoryIDs[fvstate]);
+                setFolderPath([{'name': fvstate, 'id': baseDirectoryIDs[fvstate] }]);
+            }
 
             getreq('/directory/' + currentFolder['id'], data => {
                 console.log("GOT DIRECTORY", data);
@@ -233,8 +251,16 @@ export default function User() {
     }, [currentFolder]);
 
     useEffect(() => {
+        // if(baseDirectoryIDs[fvstate] != undefined)
+        console.log("CHANGED");
         setCurrentFolder({ 'name': fvstate, 'id': baseDirectoryIDs[fvstate] });
     }, [fvstate]);
+
+    useEffect(() => {
+        console.log("GOING TO MY FILES");
+        setFVState('My Files');
+        setCurrentFolder({ 'name': 'My Files', 'id': baseDirectoryIDs['My Files'] });
+    }, [baseDirectoryIDs]);
 
     useEffect(() => {
         if(uploadedFile != null){
@@ -278,10 +304,11 @@ export default function User() {
                     'My Files': data['home'],
                     'Trash': data['trash']
                 };
-                setCurrentFolder({ 'name': 'My Files', 'id': data['home'] });
+                console.log("ID", data['home']);
+                setBaseIDs(ret);
+                // setCurrentFolder({ 'name': 'My Files', 'id': data['home'] });
                 // setFolderPath([{'name': 'My Files', 'id': data['home']}]);
                 //setFolderPath([{'name': 'My Files', 'id': data['home']}]);
-                setBaseIDs(ret);
             }
         });
     }
@@ -303,12 +330,12 @@ export default function User() {
             <div style = {{ position: 'fixed', left: 0, height: '100vh', width: '230px', top: '-9px', background: 'rgba(0,0,0,0.02)' }}>
                 <img src = '/images/gradientC.png' style = {{ cursor: 'pointer', position: 'absolute', left: '10%', top: '40px', height: '50px' }} onClick = { () => router.push('/') } />
                 <List style = {{ top: '108px' }}>
-                    <ListItem button key={"User"}>
+                    {/* <ListItem button key={"User"}>
                         <ListItemIcon><AccountBoxIcon/></ListItemIcon>
                         <h1 className={ styles.sidebarText }>{
                             getFromLocalStorage()
                         }</h1>
-                    </ListItem>
+                    </ListItem> */}
                     <Divider />
                     <ListItem button selected={fvstate === "My Files"} key={"My Files"} onClick={(ev)=>{handleListItemClick(ev, "My Files")}}>
                         <ListItemIcon><AppsIcon /></ListItemIcon>

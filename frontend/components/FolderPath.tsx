@@ -1,12 +1,17 @@
 import styles from '../styles/FolderPath.module.css';
 
 const FolderPath = ({ folderPath, changeFolder }: { folderPath: any, changeFolder: Function }) => {
+    function updateFolder(entry) {
+        console.log("CLICKED FOLDER CHANGE", entry);
+        changeFolder(entry);
+    }
+
     let ret = [];
 
     for(let i=0; i<folderPath.length; i++){
         let entry = folderPath[i];
         ret.push(
-            <h1 className = { styles.pathEntry } onClick = { () => changeFolder(entry) }>
+            <h1 className = { styles.pathEntry } onClick = { () => updateFolder(entry) }>
                 { entry['name'] }
             </h1>
         );

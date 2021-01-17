@@ -29,18 +29,6 @@ function cont(value, dict) {
     return false;
 }
 
-function splitString(str, c) {
-    let ret = [], curr = '';
-    for(let i=0; i<str.length; i++){
-        if(str[i] == c){
-            if(curr.length > 0) ret.push(curr);
-            curr = '';
-        }else curr += str[i];
-    }
-    if(curr.length > 0) ret.push(curr);
-    return ret;
-}
-
 function getExtension(name) {
     let idx = name.length-1;
     for(let i=name.length-1; i>=0; i--){
