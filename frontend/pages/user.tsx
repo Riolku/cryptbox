@@ -228,7 +228,7 @@ export default function User() {
                             newIV().then(b64_iv=>{
                                 encryptRawContent(buff, master_key, b64_iv).then((enc_b64s)=>{
                                     let ret = {
-                                        "encrypted_name": enc_name,
+                                        "encrypted_name": prepareBytesForSending(enc_name),
                                         "encrypted_content": prepareBytesForSending(enc_b64s),
                                         "name_iv": prepareIVforSending(name_iv),
                                         "content_iv": prepareIVforSending(b64_iv)
