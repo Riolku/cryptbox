@@ -1,9 +1,24 @@
+.deleteEntry{
+    position: relative;
+    float: right;
+    cursor: pointer;
+    height: 40px;
+    transition: 0.3s;
+}
+
+.deleteEntry:hover{
+    position: relative;
+    cursor: pointer;
+    height: 40px;
+    background: rgba(0,0,0,0.1);
+    transition: 0.3s;
+}
+
 .fileEntryContainer {
     position: relative;
-    width: 100%;
+    width: 97%;
     height: 40px;
     /* background: rgba(0,0,0,0.5); */
-    border-top: 1px solid #00000033;
     cursor: pointer;
     transition: 0.3s;
 }
