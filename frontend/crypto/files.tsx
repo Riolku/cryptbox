@@ -1,9 +1,5 @@
 import { fromStringToBytes, fromBytesToString, b64encode, b64decode } from './utils';
 
-if(process.browser) {
-  var encoder = new TextEncoder();
-}
-
 async function newDirectory(name, master_key) {
   let iv = await newIV();
 
@@ -20,7 +16,7 @@ async function decryptContent(requestData, master_key, iv) {
   }
 
 async function encryptContent(data, key, iv) {
-  let encoded_data = encoder.encode(data);
+  let encoded_data = fromStringToBytes(data);
 
   return window.crypto.subtle.encrypt(
     {
@@ -52,7 +48,7 @@ function loadIVfromResponse(iv) {
 }
 
 function loadBytesFromResponse(response_text) {
-  return fromStringToBytes(b64decode(response_text));
+  return b64decode(response_text);
 }
 
 function prepareIVforSending(iv) {
@@ -60,7 +56,7 @@ function prepareIVforSending(iv) {
 }
 
 function prepareBytesForSending(bytes) {
-  return b64encode(fromBytesToString(bytes));
+  return b64encode(bytes);
 }
 
 export { newDirectory, encryptContent, decryptContent, newIV, loadIVfromResponse, prepareIVforSending, prepareBytesForSending, loadBytesFromResponse };

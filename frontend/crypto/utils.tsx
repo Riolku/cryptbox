@@ -1,39 +1,38 @@
-if(process.browser) {
-  var decoder = new TextDecoder();
-  var encoder = new TextEncoder();
-}
+function b64encode(bytes) {
+  let str = "";
 
-function fromStringToBytes(string) {
-  return encoder.encode(string);
-}
+  let arr = new Uint8Array(bytes);
 
-function fromBytesToString(string) {
-  return decoder.decode(string);
-}
+  for(let i = 0; i < arr.length; i++) {
+    str += String.fromCharCode(arr[i]);
+  }
 
-function b64encode(string) {
-  let byte_string = fromStringToByteString(string);
-
-  return btoa(byte_string);
+  return btoa(str);
 }
 
 function b64decode(string) {
   let byte_string = atob(string);
 
-  return fromByteStringToString(byte_string);
+  let ret = new Uint8Array(byte_string.length);
+
+  for(let i = 0; i < byte_string.length; i++) {
+    ret[i] = byte_string.charCodeAt(i);
+  }
+
+  return ret;
 }
 
-function fromStringToByteString(string) {
+function fromStringToBytes(string) {
   const codeUnits = new Uint16Array(string.length);
 
   for (let i = 0; i < codeUnits.length; i++) {
     codeUnits[i] = string.charCodeAt(i);
   }
 
-  let res = '';
+  let res = new Uint8Array(2 * string.length);
   for(let i=0; i<codeUnits.length; i++){
-      res += String.fromCharCode(first_eight_bits(codeUnits[i]));
-      res += String.fromCharCode(last_eight_bits(codeUnits[i]));
+      res[2 * i] = String.fromCharCode(first_eight_bits(codeUnits[i]));
+      res[2 * i + 1] = String.fromCharCode(last_eight_bits(codeUnits[i]));
   }
 
   return res;
@@ -47,16 +46,10 @@ function last_eight_bits(int16) {
   return int16 & 255;
 }
 
-function fromByteStringToString(binary) {
-  const bytes = new Uint8Array(binary.length);
-
-  for (let i = 0; i < bytes.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-
+function fromBytesToString(binary) {
   let res = '';
   for(let i=0; i<bytes.length; i+=2)
-      res += String.fromCharCode(combine_int8s(bytes[i], bytes[i + 1]));
+      res += String.fromCharCode(combine_int8s(binary[i], binary[i + 1]));
 
   return res;
 }
