@@ -15,7 +15,7 @@ function Register() {
 
     const router = useRouter();
 
-    function submitRegister() {
+    async function submitRegister() {
         let username = (document.getElementById('registerUsernameField') as HTMLInputElement).value;
         let password = (document.getElementById('registerPasswordField') as HTMLInputElement).value;
         let repassword = (document.getElementById('registerConfirmPasswordField') as HTMLInputElement).value;
@@ -24,18 +24,20 @@ function Register() {
         else if(password == '') setErrorMessage('Password cannot be empty');
         else if(password != repassword) setErrorMessage('Passwords do not match');
         else{
-            let master_key = getUserMasterKey(username, password);
+            let master_key = await getUserMasterKey(username, password);
+
+            let home = await newDirectory("Home", master_key);
+            let trash = await newDirectory("Trash", master_key);
 
             post('/register', {
                 'username': username,
                 'password': prepareMasterKeyForLogin(master_key),
-                'home' : newDirectory("Home", master_key),
-                'trash' : newDirectory("Trash", master_key)
+                'home' : home,
+                'trash' : trash
             }, data => {
                 if(data['status'] != 'ok') setErrorMessage('Login failed');
                 else{
-                    let storage_string = exportMasterKeyForStorage(master_key);
-                    storage_string.then(res => {
+                    exportMasterKeyForStorage(master_key).then(storage_key => {
                         localStorage.setItem('master_key', res);
                         localStorage.setItem('username', username);
                         window.location.reload();

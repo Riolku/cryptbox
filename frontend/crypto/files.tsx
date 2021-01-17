@@ -1,7 +1,11 @@
-import { decoder, encoder, fromStringToBytes, fromBytesToString, b64encode, b64decode } from './utils';
+import { fromStringToBytes, fromBytesToString, b64encode, b64decode } from './utils';
+
+if(process.browser) {
+  var encoder = new TextEncoder();
+}
 
 async function newDirectory(name, master_key) {
-  let iv = newIV();
+  let iv = await newIV();
 
   return {
     encrypted_name : encryptContent(name, master_key, iv),
