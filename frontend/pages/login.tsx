@@ -21,20 +21,19 @@ function login() {
         if(username == '') setErrorMessage('Username cannot be empty');
         else if(password == '') setErrorMessage('Password cannot be empty');
         else{
-            let master_key = getUserMasterKey(username, password);
-
-            post('/authenticate', {
-                'username': username,
-                'password': prepareMasterKeyForLogin(master_key)
-            }, data => {
-                if(data['status'] != 'ok') setErrorMessage('Login failed');
-                else{
-                    let storage_string = exportMasterKeyForStorage(master_key);
-                    storage_string.then(res => {
-                        localStorage.setItem('master_key', res);
-                        window.location.reload();
-                    });
-                }
+            getUserMasterKey(username, password).then(master_key => {
+              post('/authenticate', {
+                  'username': username,
+                  'password': prepareMasterKeyForLogin(master_key)
+              }, data => {
+                  if(data['status'] != 'ok') setErrorMessage('Login failed');
+                  else{
+                      exportMasterKeyForStorage(master_key).then(res => {
+                          localStorage.setItem('master_key', res);
+                          window.location.reload();
+                      });
+                  }
+              });
             });
         }
     }
