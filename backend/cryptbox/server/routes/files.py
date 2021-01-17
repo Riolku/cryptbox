@@ -26,7 +26,7 @@ def verify_login(f):
 @wrap_request(False)
 @verify_login
 def base_dirs():
-  return {"status": "okay", "home": g.user.home, "trash": g.user.trash}
+  return {"status": "ok", "home": g.user.home, "trash": g.user.trash}
 
 def format_dir(d, c = False):
   o = {
@@ -69,6 +69,7 @@ def format_file(file, c = False, p = False):
 @verify_login
 def get_directory(id):
   d = Directories.query.filter_by(id = id).first()
+  print(d)
   if d is None or d.owner != g.user.id:
     return {"status": "fail", "error": "forbidden"}
   return {"status": "ok", **format_dir(d)}
@@ -78,6 +79,7 @@ def get_directory(id):
 @verify_login
 def get_file(id):
   f = Files.query.filter_by(id = id).first()
+  print(f)
   if f is None or f.owner != g.user.id:
     return {"status": "fail", "error": "forbidden"}
   return {"status": "ok", **format_file(id, True, True)}
