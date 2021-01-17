@@ -21,6 +21,8 @@ import { encryptContent, newIV } from '../crypto/files'
 import { importMasterKeyFromStorage } from '../crypto/user'
 import { fromBytesToString } from '../crypto/utils'
 
+import { decryptContent } from '../crypto/files';
+
 import styles from '../styles/User.module.css';
 
 const drawerWidth = 300;
@@ -84,6 +86,50 @@ function splitString(str, c) {
     return ret;
 }
 
+function prependZero(num) {
+    if(num <= 9) return '0' + num;
+    return num;
+}
+
+function changeToDate(epoch) {
+    let date = new Date(epoch);
+    return prependZero(date.getMonth()) + '-' + prependZero(date.getDay()) + '-' + date.getFullYear();
+}
+
+function conv(children) {
+    let ret = [], master_key = localStorage.getItem('master_key');
+    children['directories'].sort(function(a, b) {
+        if(a['modified'] == b['modified']) return a['created'] > b['created'];
+        return a['modified'] > b['modified'];
+    });
+    children['files'].sort(function(a, b) {
+        if(a['modified'] == b['modified']) return a['created'] > b['created'];
+        return a['modified'] > b['modified'];
+    });
+    for(let folder of children['directories']){
+        let folder_iv = folder['name_iv'];
+        ret.push(
+            {
+                'name': decryptContent(folder['encrypted_name'], master_key, folder_iv),
+                'modified': changeToDate(folder['modified']),
+                'created': changeToDate(folder['created']),
+                'parent': folder['parent']
+            }
+        );
+    }
+    for(let file of children['files']){
+        let file_iv = file['name_iv'];
+        ret.push(
+            {
+                'name': decryptContent(file['encrypted_name'], master_key, file_iv),
+                'modified': changeToDate(file['modified']),
+                'created': changeToDate(file['created'])
+            }
+        );
+    }
+    return ret;
+}
+
 export default function User(){
     const classes = useStyles();
     const router = useRouter();
@@ -98,7 +144,7 @@ export default function User(){
     let [firstTime, setFirstTime] = useState(true);
     let [baseDirectoryIDs, setBaseIDs] = useState({});
 
-    const handleListItemClick =(event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: string)=>{
+    const handleListItemClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: string)=>{
         setFVState(index)
     }
 
@@ -131,7 +177,7 @@ export default function User(){
 
             }else{
                 setParentFolder(data['parent']);
-                setChildren(data['children']);
+                setChildren(conv(data['children']));
             }
         });
     }, [currentFolder]);
