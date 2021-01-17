@@ -39,7 +39,7 @@ async function prepareMasterKeyForLogin(master_key) {
   let sending_key = await pbkdf2_deriveKey(
     key,
     fromStringToBytes('preparation'),
-    1000
+    100
   );
 
   bytes = await window.crypto.subtle.exportKey("raw", sending_key);
@@ -56,7 +56,7 @@ async function deriveBitsFromUsername(username) {
     {
       name : "PBKDF2",
       salt : fromStringToBytes('username'),
-      iterations : 1000,
+      iterations : 100,
       hash : "SHA-256"
     },
     key,
@@ -68,7 +68,7 @@ async function deriveKeyFromPasswordAndSalt(password, salt) {
   let key = await importPBKDF2key(password);
 
   return pbkdf2_deriveKey(
-    key, salt, 100000
+    key, salt, 10000
   );
 }
 
