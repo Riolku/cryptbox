@@ -54,7 +54,7 @@
 
     position: absolute;
     height: 30px;
-    width: 110px;
+    width: 120px;
     background: rgb(17,37,126);
     color: white;
     font-family: var(--font);
@@ -82,7 +82,7 @@
     color: black;
     font-family: var(--font);
     font-size: 15px;
-    left: calc(4.5% + 110px);
+    left: calc(4.5% + 120px);
     top: 10%;
     cursor: pointer;
     transition: 0.3s;

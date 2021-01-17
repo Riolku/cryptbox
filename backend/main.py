@@ -43,6 +43,11 @@ def catch_404(e):
   print(e)
   return {"status": "error", "code": 404}
 
+@app.errorhandler(Exception)
+def catch_error(e):
+  print(e)
+  return {"status": "error", "code": 500}
+
 if __name__ == '__main__':
   debug = "debug" in sys.argv
   app.run(host = '0.0.0.0', port = 5000, debug = debug)
