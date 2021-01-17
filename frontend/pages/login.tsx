@@ -6,7 +6,7 @@ import Header from '../components/Header';
 
 import styles from '../styles/Login.module.css';
 
-import post from './post';
+import { postreq } from './request-utils';
 
 import { getUserMasterKey, exportMasterKeyForStorage, importMasterKeyFromStorage, prepareMasterKeyForLogin } from '../crypto/user';
 
@@ -27,7 +27,7 @@ function login() {
 
             console.log("Key Acquired.");
 
-            post('/authenticate', {
+            postreq('/authenticate', {
                 'username': username,
                 'password': await prepareMasterKeyForLogin(master_key)
             }, data => {
