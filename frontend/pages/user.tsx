@@ -18,7 +18,7 @@ import Directory from '../components/Directory'
 import FileInfo from '../components/FileInfo';
 import Header from '../components/Header';
 
-import { decryptContent, encryptContent, newIV } from '../crypto/files'
+import { decryptContent, encryptContent, encryptRawContent, newIV, prepareBytesForSending, prepareIVforSending } from '../crypto/files'
 import { importMasterKeyFromStorage } from '../crypto/user'
 import { fromBytesToString } from '../crypto/utils'
 
@@ -202,23 +202,27 @@ export default function User() {
         if(uploadedFile != null){
 
             uploadedFile.arrayBuffer().then((buff)=>{
-
-                        let b64s = _arrayBufferToBase64(buff);
-
+                let master_key = importMasterKeyFromStorage(localStorage.getItem('master_key'))
+                let name_iv = newIV()
+                encryptContent(uploadedFile.name, master_key, name_iv).then((enc_name)=>{
+                    let b64_iv = newIV()
+                    encryptRawContent(buff, master_key, b64_iv).then((enc_b64s)=>{
                         let ret = {
-                            "encrypted_name": uploadedFile.name,
-                            "encrypted_content": b64s,
-                            "name_iv": "YEP cock",
-                            "content_iv": "YEP cock"
+                            "encrypted_name": enc_name,
+                            "encrypted_content": prepareBytesForSending(enc_b64s),
+                            "name_iv": prepareIVforSending(name_iv),
+                            "content_iv": prepareIVforSending(b64_iv)
                         }
 
                         post('/directory/' + currentFolder + '/file', ret, (data)=>{
                             if(data['status'] != 'ok'){
-        
+                                
                             }else{
         
                             }
                         });
+                    })
+                })
             });
         }
     }, [uploadedFile]);
