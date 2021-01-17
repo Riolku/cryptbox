@@ -179,6 +179,7 @@ export default function User(){
     return(
         <div>
             <div style = {{ position: 'fixed', left: 0, height: '100vh', width: '230px', top: '-9px', background: 'rgba(0,0,0,0.02)' }}>
+                <img src = '/images/gradientC.png' style = {{ position: 'absolute', left: '10%', top: '3.5%', height: '50px' }} />
                 <List style = {{ top: '108px' }}>
                     <ListItem button selected={fvstate === "My Files"} key={"My Files"} onClick={(ev)=>{handleListItemClick(ev, "My Files")}}>
                         <ListItemIcon><AppsIcon /></ListItemIcon>
