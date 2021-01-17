@@ -23,8 +23,6 @@ import { fromBytesToString } from '../crypto/utils'
 
 import styles from '../styles/User.module.css';
 
-const drawerWidth = 300;
-
 const testData = [
     {
         'encrypted_name': 'File 1',
@@ -45,32 +43,6 @@ const testData = [
         'created': '12/3/2021 10:41 PM',
     }
 ];
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: 'flex',
-    },
-    appBar: {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-    },
-    drawer: {
-      width: drawerWidth,
-      flexShrink: 0,
-    },
-    drawerPaper: {
-      width: drawerWidth,
-    },
-    // necessary for content to be below app bar
-    toolbar: theme.mixins.toolbar,
-    content: {
-      flexGrow: 1,
-      backgroundColor: theme.palette.background.default,
-      paddingLeft: 285,
-    },
-  }),
-);
 
 function splitString(str, c) {
     let ret = [], curr = '';
@@ -128,8 +100,7 @@ function conv(children) {
     return ret;
 }
 
-export default function User(){
-    const classes = useStyles();
+export default function User() {
     const router = useRouter();
 
     const [fvstate, setFVState] = useState("My Files");
@@ -155,18 +126,21 @@ export default function User(){
         router.push('/');
     }
 
-    function addFolder(name) {
-        let iv = newIV();
+    async function addFolder(name) {
+        let iv = await newIV();
+        setPopupErrorMessage('');
+        console.log("BASE", baseDirectoryIDs);
         fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder + '/directory', {
             method: 'POST',
             credentials: 'include',
             body: JSON.stringify({
                 'name_iv': iv,
-                'encrypted_name': encryptContent(name, localStorage.getItem('master_key'), iv),
+                'encrypted_name': await encryptContent(name, await importMasterKeyFromStorage(localStorage.getItem('master_key')), iv),
                 'parent': currentFolder
             })
         }).then(ret => ret.json())
         .then(data => {
+            console.log(data);
             if(data['status'] != 'ok'){
 
             }else{
@@ -177,7 +151,7 @@ export default function User(){
 
     function attemptAddFolder() {
         let name = (document.getElementById('create-folder-name') as HTMLInputElement).value;
-        if(name == '') setPopupErrorMessage('Please enter a file name');
+        if(name == '') setPopupErrorMessage('Please enter a folder name');
         else addFolder(name);
     }
 
@@ -237,7 +211,7 @@ export default function User(){
             credentials: 'include'
         }).then(ret => ret.json())
         .then(data => {
-            console.log(data);
+            console.log("FETCHED IDS", data);
             if(data['status'] != 'ok'){
 
             }else{
