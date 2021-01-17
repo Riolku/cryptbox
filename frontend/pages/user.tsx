@@ -18,7 +18,7 @@ import Directory from '../components/Directory'
 import FileInfo from '../components/FileInfo';
 import Header from '../components/Header';
 
-import { decryptContent, encryptContent, newIV } from '../crypto/files'
+import { decryptContent, encryptContent, encryptRawContent, newIV, prepareBytesForSending, prepareIVforSending } from '../crypto/files'
 import { importMasterKeyFromStorage } from '../crypto/user'
 import { fromBytesToString } from '../crypto/utils'
 
@@ -125,6 +125,17 @@ export default function User() {
 
     let [folderPath, setFolderPath] = useState([]);
 
+    function _arrayBufferToBase64( buffer ) {
+        var binary = '';
+        var bytes = new Uint8Array( buffer );
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode( bytes[ i ] );
+        }
+        var str = window.btoa( binary );
+        return str;
+    }
+
     const handleListItemClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: string)=>{
         setFVState(index)
     }
@@ -205,30 +216,29 @@ export default function User() {
 
     useEffect(() => {
         if(uploadedFile != null){
-            let ret = new FormData();
 
-            let fr = new FileReader();
+            uploadedFile.arrayBuffer().then((buff)=>{
+                let master_key = importMasterKeyFromStorage(localStorage.getItem('master_key'))
+                let name_iv = newIV()
+                encryptContent(uploadedFile.name, master_key, name_iv).then((enc_name)=>{
+                    let b64_iv = newIV()
+                    encryptRawContent(buff, master_key, b64_iv).then((enc_b64s)=>{
+                        let ret = {
+                            "encrypted_name": enc_name,
+                            "encrypted_content": prepareBytesForSending(enc_b64s),
+                            "name_iv": prepareIVforSending(name_iv),
+                            "content_iv": prepareIVforSending(b64_iv)
+                        }
 
-            fr.readAsBinaryString(uploadedFile)
-
-            newIV().then((iv)=>{
-                importMasterKeyFromStorage(localStorage.getItem('master_key')).then((mk)=>{
-                    encryptContent(fr.result, mk, iv).then((data)=>{
-                        ret.append('file', fromBytesToString(data), uploadedFile.name);
-                        fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder + '/file', {
-                            method: 'POST',
-                            credentials: 'include',
-                            body: ret
-                        }).then(ret => ret.json())
-                        .then(data => {
+                        post('/directory/' + currentFolder + '/file', ret, (data)=>{
                             if(data['status'] != 'ok'){
-        
+                                
                             }else{
         
                             }
                         });
-                    }) 
-                });
+                    })
+                })
             });
         }
     }, [uploadedFile]);
@@ -250,6 +260,7 @@ export default function User() {
                 };
                 setCurrentFolder(data['home']);
                 setFolderPath([{'name': 'My Files', 'id': data['home']},{'name': 'My Files', 'id': data['home']}]);
+                //setFolderPath([{'name': 'My Files', 'id': data['home']}]);
                 setBaseIDs(ret);
             }
         });
@@ -300,6 +311,7 @@ export default function User() {
             </div>
             <div className = { styles.userBackground }>
                 <FolderPath folderPath = { folderPath } changeFolder = { setCurrentFolder } />
+                {/*<FolderPath folderPath = { folderPath } />*/}
                 {/* <h1 className = { styles.userHeader }> { fvstate } </h1> */}
                 {
                     fvstate == 'My Files'?
