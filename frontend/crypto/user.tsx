@@ -23,6 +23,7 @@ async function importMasterKeyFromStorage(storage_string) {
   let bytes = fromStringToBytes(decoded_string);
 
   console.log("READY TO DO STUFF")
+  console.log(bytes);
 
   return window.crypto.subtle.importKey(
     "raw",
