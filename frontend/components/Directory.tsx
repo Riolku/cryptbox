@@ -53,16 +53,23 @@ export default function Directory({data, chooseFile, changeDirectory, isFirst, i
     }
 
     function deleteEntry(){
+      if(data['extension'] == 'folder') {
+        deletereq("/directory/" + data['id'], {}, ()=>{
+          update();
+        });
+      }
+      else {
         deletereq("/file/"+data['id'], {}, ()=>{
-            update()
-        })
+          update();
+        });
+      }
     }
 
     if(isFirst){
         return(
             <div className = { styles.fileEntryContainerNoHover } style = {{ borderTop: 0, borderBottom: isLast?'1px solid #00000033':'' }}>
                 <h1 className = { styles.fileEntryComponent } style = {{ fontFamily: 'var(--bold-font)', paddingLeft: '0.5%', width: '40%' }}> File Name </h1>
-    
+
                 <h1 className = { styles.fileEntryComponentRight } style = {{ fontFamily: 'var(--bold-font)', width: '10%', right:"3%" }}> Date Uploaded </h1>
                 <h1 className = { styles.fileEntryComponentRight } style = {{ fontFamily: 'var(--bold-font)', width: '10%', right:"2.7%" }}> Last Modified </h1>
                 <h1 className = { styles.fileEntryComponentRight } style = {{ fontFamily: 'var(--bold-font)', width: '6%', right:"2.5%" }}> Extension </h1>
@@ -82,7 +89,7 @@ export default function Directory({data, chooseFile, changeDirectory, isFirst, i
             <div className={styles.fileEntryContainer} onClick = { selectFile } >
                 <div className = { styles.fileEntryIcon } style = {{ width: '2%' }}> { typeIcon } </div>
                 <h1 className = { styles.fileEntryComponent } style = {{ width: '40%' }}> { data['name'] } </h1>
-                
+
                 <h1 className = { styles.fileEntryComponentRight } style = {{ width: '10%' }}> { data['created'] } </h1>
                 <h1 className = { styles.fileEntryComponentRight } style = {{ width: '10%' }}> { data['modified'] } </h1>
                 <h1 className = { styles.fileEntryComponentRight } style = {{ width: '6%' }}> { data['extension'] } </h1>
