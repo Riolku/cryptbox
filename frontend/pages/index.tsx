@@ -1,12 +1,14 @@
 import { Link } from '@material-ui/core';
 
 import Navbar from '../components/Navbar';
+import Header from '../components/Header';
 
 import styles from '../styles/Home.module.css';
 
 export default function Home() {
     return (
         <div>
+            <Header title="Home"/>
             <Navbar linkCol = 'white' />
             <div className = { styles.mainBackground }>
                 <h1 className = { styles.homeHeader }> Encrypt, store, and share your work, in one easy step </h1>

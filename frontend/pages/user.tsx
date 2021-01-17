@@ -15,6 +15,7 @@ import FilePicker from '../components/FilePicker';
 import Navbar from '../components/Navbar';
 import Directory from '../components/Directory'
 import FileInfo from '../components/FileInfo';
+import Header from '../components/Header';
 
 import styles from '../styles/User.module.css';
 
@@ -178,6 +179,7 @@ export default function User(){
 
     return(
         <div>
+            <Header title="User"/>
             <div style = {{ position: 'fixed', left: 0, height: '100vh', width: '230px', top: '-9px', background: 'rgba(0,0,0,0.02)' }}>
                 <img src = '/images/gradientC.png' style = {{ cursor: 'pointer', position: 'absolute', left: '10%', top: '3.5%', height: '50px' }} onClick = { () => router.push('/') } />
                 <List style = {{ top: '108px' }}>
