@@ -145,7 +145,7 @@ export default function User() {
             })
         }).then(ret => ret.json())
         .then(data => {
-            console.log(data);
+            console.log("ADDED FOLDER", data);
             if(data['status'] != 'ok'){
 
             }else{
@@ -166,7 +166,7 @@ export default function User() {
             credentials: 'include'
         }).then(ret => ret.json())
         .then(data => {
-            console.log(data);
+            console.log("GOT DIRECTORY", data);
             if(data['status'] != 'ok'){
 
             }else{
