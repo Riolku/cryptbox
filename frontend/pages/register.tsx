@@ -36,11 +36,11 @@ function Register() {
                 'home' : home,
                 'trash' : trash
             }, data => {
-                console.log(data);
                 if(data['status'] != 'ok') {
                   if (data['error'] == 'username_taken') setErrorMessage('This username is already in use!');
                   else if (data['error'] == 'username_invalid') setErrorMessage('Usernames can only contain letters, numbers, underscores, and periods!');
-                }else{
+                }
+                else{
                     exportMasterKeyForStorage(master_key).then(storage_key => {
                         localStorage.setItem('master_key', storage_key);
                         router.push('/user');
