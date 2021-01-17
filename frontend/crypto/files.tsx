@@ -18,7 +18,7 @@ async function decryptContent(requestData, master_key, iv) {
 async function encryptContent(data, key, iv) {
   let encoded_data = fromStringToBytes(data);
 
-  return encryptRawContent(raw_data, key, iv);
+  return encryptRawContent(encoded_data, key, iv);
 }
 
 async function encryptRawContent(raw_data, key, iv) {
@@ -63,4 +63,4 @@ function prepareBytesForSending(bytes) {
   return b64encode(bytes);
 }
 
-export { newDirectory, encryptContent, decryptContent, newIV, loadIVfromResponse, prepareIVforSending, prepareBytesForSending, loadBytesFromResponse };
+export { newDirectory, encryptContent, encryptRawContent, decryptContent, newIV, loadIVfromResponse, prepareIVforSending, prepareBytesForSending, loadBytesFromResponse };
