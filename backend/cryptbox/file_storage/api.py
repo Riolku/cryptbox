@@ -4,10 +4,10 @@ import os
 BASE_DIR = "/srv/cryptbox/files/"
 
 def get_file_path(file_id):
-    return BASE_DIR + str(id)
+    return BASE_DIR + str(file_id)
 
-def open_file(id, permissions):
-    return open(get_file_path(id), permissions)
+def open_file(file_id, permissions):
+    return open(get_file_path(file_id), permissions)
 
 def store_file_contents(file_id, contents):
     with open_file(file_id, "w") as f:
