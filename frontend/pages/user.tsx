@@ -10,6 +10,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import PublishIcon from '@material-ui/icons/Publish';
 import AddIcon from '@material-ui/icons/Add';
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
 
 import FilePicker from '../components/FilePicker';
 import Navbar from '../components/Navbar';
@@ -106,6 +107,8 @@ export default function User() {
     const [fvstate, setFVState] = useState("My Files");
     const [uploadedFile, setUpload] = useState(null)
 
+    const [username, setUsername] = useState("")
+
     let [currentFolder, setCurrentFolder] = useState(0);
     let [parentFolder, setParentFolder] = useState(0);
     let [children, setChildren] = useState([]);
@@ -123,6 +126,7 @@ export default function User() {
 
     function submitLogout() {
         localStorage.removeItem('master_key');
+        localStorage.removeItem('username')
         router.push('/');
     }
 
@@ -231,12 +235,30 @@ export default function User() {
         });
     }
 
+    function getFromLocalStorage(): string{
+        
+        let username = ""
+
+        if(process.browser){
+            username = localStorage.getItem('username')
+        }
+
+        return username;
+    }
+
     return(
         <div>
             <Header title="User"/>
             <div style = {{ position: 'fixed', left: 0, height: '100vh', width: '230px', top: '-9px', background: 'rgba(0,0,0,0.02)' }}>
                 <img src = '/images/gradientC.png' style = {{ cursor: 'pointer', position: 'absolute', left: '10%', top: '3.5%', height: '50px' }} onClick = { () => router.push('/') } />
                 <List style = {{ top: '108px' }}>
+                    <ListItem button key={"User"}>
+                        <ListItemIcon><AccountBoxIcon/></ListItemIcon>
+                        <h1 className={ styles.sidebarText }>{
+                            getFromLocalStorage()
+                        }</h1>
+                    </ListItem>
+                    <Divider />
                     <ListItem button selected={fvstate === "My Files"} key={"My Files"} onClick={(ev)=>{handleListItemClick(ev, "My Files")}}>
                         <ListItemIcon><AppsIcon /></ListItemIcon>
                         <h1 className = { styles.sidebarText }> MY FILES </h1>
