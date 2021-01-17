@@ -173,7 +173,7 @@ export default function User() {
     }
 
     useEffect(() => {
-        if(currentFolder != 0){
+        if(currentFolder != 0 && currentFolder != undefined){
           getreq('/directory/' + currentFolder, data => {
             console.log("GOT DIRECTORY", data);
             if (data['status'] != 'ok') {
