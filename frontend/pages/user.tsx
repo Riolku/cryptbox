@@ -22,10 +22,9 @@ import { decryptContent, encryptContent, encryptRawContent, newIV, prepareBytesF
 import { importMasterKeyFromStorage } from '../crypto/user'
 import { fromBytesToString } from '../crypto/utils'
 
-import FolderPath from '../components/FolderPath';
-import post from './post';
-
 import styles from '../styles/User.module.css';
+
+import { getreq, postreq } from './request-utils';
 
 const testData = [
     {
@@ -112,7 +111,7 @@ export default function User() {
 
     const [username, setUsername] = useState("")
 
-    let [currentFolder, setCurrentFolder] = useState(null);
+    let [currentFolder, setCurrentFolder] = useState(0);
     let [parentFolder, setParentFolder] = useState(0);
     let [children, setChildren] = useState([]);
 
@@ -122,7 +121,7 @@ export default function User() {
     let [showFolderPopup, setFolderPopup] = useState(false);
 
     let [popupErrorMessage, setPopupErrorMessage] = useState('');
-
+    
     let [folderPath, setFolderPath] = useState([]);
 
     function _arrayBufferToBase64( buffer ) {
@@ -155,11 +154,10 @@ export default function User() {
         console.log("GOT MASTER");
         let data = await encryptContent(name, master, iv);
         console.log("DONE DATA");
-
-        post('/directory/' + currentFolder + '/directory', {
+        postreq('/directory/' + currentFolder + '/directory', {
             'name_iv': iv,
             'encrypted_name': data,
-            'parent': currentFolder['id']
+            'parent': currentFolder
         }, data => {
             console.log("ADDED FOLDER", data);
             if(data['status'] != 'ok'){
@@ -194,15 +192,11 @@ export default function User() {
                 }else setFolderPath(temp);
             }else setFolderPath([{'name': fvstate, 'id': baseDirectoryIDs[fvstate] }]);
 
-            fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder, {
-                method: 'GET',
-                credentials: 'include'
-            }).then(ret => ret.json())
-            .then(data => {
+            getreq('/directory/' + currentFolder['id'], data => {
                 console.log("GOT DIRECTORY", data);
-                if(data['status'] != 'ok'){
-
-                }else{
+                if (data['status'] != 'ok') {
+    
+                } else {
                     setParentFolder(data['parent']);
                     setChildren(conv(data['children']));
                 }
@@ -216,7 +210,6 @@ export default function User() {
 
     useEffect(() => {
         if(uploadedFile != null){
-
             uploadedFile.arrayBuffer().then((buff)=>{
                 let master_key = importMasterKeyFromStorage(localStorage.getItem('master_key'))
                 let name_iv = newIV()
@@ -230,10 +223,10 @@ export default function User() {
                             "content_iv": prepareIVforSending(b64_iv)
                         }
 
-                        post('/directory/' + currentFolder + '/file', ret, (data)=>{
-                            if(data['status'] != 'ok'){
+                        postreq('/directory/' + currentFolder + '/file', ret, data => {
+                            if (data['status'] != 'ok') {
                                 
-                            }else{
+                            } else {
         
                             }
                         });
@@ -245,11 +238,7 @@ export default function User() {
 
     if(firstTime){
         setFirstTime(false);
-        fetch('https://api.cryptbox.kgugeler.ca/user/dirs', {
-            method: 'GET',
-            credentials: 'include'
-        }).then(ret => ret.json())
-        .then(data => {
+        getreq('/user/dirs', data => {
             console.log("FETCHED IDS", data);
             if(data['status'] != 'ok'){
 
@@ -259,7 +248,7 @@ export default function User() {
                     'Trash': data['trash']
                 };
                 setCurrentFolder(data['home']);
-                setFolderPath([{'name': 'My Files', 'id': data['home']},{'name': 'My Files', 'id': data['home']}]);
+                setFolderPath([{'name': 'My Files', 'id': data['home']}]);
                 //setFolderPath([{'name': 'My Files', 'id': data['home']}]);
                 setBaseIDs(ret);
             }
@@ -311,7 +300,6 @@ export default function User() {
             </div>
             <div className = { styles.userBackground }>
                 <FolderPath folderPath = { folderPath } changeFolder = { setCurrentFolder } />
-                {/*<FolderPath folderPath = { folderPath } />*/}
                 {/* <h1 className = { styles.userHeader }> { fvstate } </h1> */}
                 {
                     fvstate == 'My Files'?
@@ -329,7 +317,7 @@ export default function User() {
                     <Directory data = { null } changeDirectory = { null } isFirst = { true } isLast = { false } />
                     {
                         children.map((value, index) => {
-                            return <Directory data = { value } changeDirectory = { () => setCurrentFolder({ 'name': value['name'], 'id': value['id'] }) } isFirst = { false } isLast = { index == testData.length-1 } />
+                            return <Directory data = { value } changeDirectory = { setCurrentFolder } isFirst = { false } isLast = { index == testData.length-1 } />
                         })
                     }
                 </div>
