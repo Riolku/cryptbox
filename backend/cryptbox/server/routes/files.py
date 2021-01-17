@@ -9,6 +9,9 @@ from cryptbox import app
 from cryptbox.database.models.directories import Directories
 from cryptbox.database.models.files import Files
 from cryptbox.database.models.users import Users
+
+from cryptbox.file_storage import get_file_contents, store_file_contents
+
 from cryptbox.jwtutils import verify_jwt
 
 def verify_login(f):
@@ -29,6 +32,7 @@ def format_dir(d, c = False):
   o = {
     "parent": d.parent,
     "encrypted_name": d.encrypted_name,
+    "name_iv": d.name_iv,
     "modified": d.modified,
     "created": d.created,
     "owner": Users.query.filter_by(id = d.owner).first().username
@@ -40,16 +44,24 @@ def format_dir(d, c = False):
     }
   return o
 
-def format_file(file, c = False):
+def format_file(file, c = False, p = False):
   o = {
     "id": file.id,
     "encrypted_name": file.encrypted_name,
+    "name_iv": file.name_iv,
     "modified": file.modified,
     "created": file.created,
     "owner": Users.query.filter_by(id = file.owner).first().username
   }
   if c:
-    o["encrypted_content"] = "there's nothing here"
+    o["encrypted_content"] = get_file_contents(file.id)
+  if p:
+    d = Directories.query.filter_by(id = file.parent).first()
+    o["parent"] = {
+      "id": d.id,
+      "encrypted_name": d.encrypted_name,
+      "name_iv": d.name_iv
+    }
   return o
 
 @app.route("/directory/<id>", methods = ["GET"])
@@ -68,7 +80,7 @@ def get_file(id):
   f = Files.query.filter_by(id = id).first()
   if f is None or f.owner != g.user.id:
     return {"status": "fail", "error": "forbidden"}
-  return {"status": "ok", **format_file(id, True)}
+  return {"status": "ok", **format_file(id, True, True)}
 
 @app.route("/directory/<id>", methods = ["PATCH"])
 @wrap_request()
@@ -91,7 +103,8 @@ def modify_file(id):
   if f is None or f.owner != g.user.id:
     return {"status": "fail", "error": "forbidden"}
   f.encrypted_name = request.json.get("encrypted_name", f.encrypted_name)
-  # TODO encrypted content
+  if "encrypted_content" in request.json:
+    store_file_contents(f.id, request.json["encrypted_content"])
   pid = f.parent = request.json.get("parent", f.parent)
   f.modified = int(time.time())
   while True:
