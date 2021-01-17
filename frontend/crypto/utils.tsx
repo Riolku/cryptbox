@@ -47,9 +47,11 @@ function last_eight_bits(int16) {
 }
 
 function fromBytesToString(binary) {
+  let arr = new Uint8Array(binary);
+  
   let res = '';
-  for(let i=0; i<binary.length; i+=2)
-      res += String.fromCharCode(combine_int8s(binary[i], binary[i + 1]));
+  for(let i=0; i<arr.length; i+=2)
+      res += String.fromCharCode(combine_int8s(arr[i], arr[i + 1]));
 
   return res;
 }
