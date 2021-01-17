@@ -93,6 +93,7 @@ def modify_directory(id):
   d.encrypted_name = request.json.get("encrypted_name", d.encrypted_name)
   d.parent = request.json.get("parent", d.parent)
   d.modified = int(time.time())
+  db.session.add(d)
   db.session.commit()
   return {"status": "ok"}
 
@@ -113,6 +114,7 @@ def modify_file(id):
     pd.modified = int(time.time())
     if pd.parent:
       pid = pd.parent
+  db.session.add(f)
   db.session.commit()
   return {"status": "ok"}
 
@@ -123,7 +125,8 @@ def create_subdir(id):
   pd = Directories.query.filter_by(id = id).first()
   if pd is None or pd.owner != g.user.id:
     return {"status": "fail", "error": "forbidden"}
-  d = Directories(owner = g.user.id, parent = pd.id, encrypted_name = request.json["encrypted_name"], name_iv = request.json["name_iv"])
+  tm = int(time.time())
+  d = Directories(owner = g.user.id, parent = pd.id, encrypted_name = request.json["encrypted_name"], name_iv = request.json["name_iv"], created = tm, modified = tm)
   db.session.add(d)
   db.session.commit()
   return {"status": "ok", "id": d.id}
@@ -136,7 +139,8 @@ def create_file(id):
   pd = Directories.query.filter_by(id = id).first()
   if pd is None or pd.owner != g.user.id:
     return {"status": "fail", "error": "forbidden"}
-  f = Files(owner = g.user.id, parent = pd.id, encrypted_name = request.json["encrypted_name"], name_iv = request.json["name_iv"], content_iv = request.json["content_iv"])
+  tm = int(time.time())
+  f = Files(owner = g.user.id, parent = pd.id, encrypted_name = request.json["encrypted_name"], name_iv = request.json["name_iv"], content_iv = request.json["content_iv"], created = tm, modified = tm)
   db.session.add(f)
   db.session.commit()
   store_file_contents(f.id, request.json["encrypted_content"])
