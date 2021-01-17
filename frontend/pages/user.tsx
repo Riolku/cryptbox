@@ -17,7 +17,7 @@ import Directory from '../components/Directory'
 import FileInfo from '../components/FileInfo';
 import Header from '../components/Header';
 
-import { decryptContent } from '../crypto/files';
+import { newIV, decryptContent, encryptContent } from '../crypto/files';
 
 import styles from '../styles/User.module.css';
 
@@ -135,10 +135,14 @@ export default function User(){
 
     let [currentFolder, setCurrentFolder] = useState(0);
     let [parentFolder, setParentFolder] = useState(0);
-    let [children, setChildren] = useState(null);
+    let [children, setChildren] = useState([]);
 
     let [firstTime, setFirstTime] = useState(true);
     let [baseDirectoryIDs, setBaseIDs] = useState({});
+
+    let [showFolderPopup, setFolderPopup] = useState(true);
+
+    let [popupErrorMessage, setPopupErrorMessage] = useState('');
 
     const handleListItemClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: string)=>{
         setFVState(index)
@@ -149,10 +153,16 @@ export default function User(){
         router.push('/');
     }
 
-    function addFolder() {
+    function addFolder(name) {
+        let iv = newIV();
         fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder + '/directory', {
             method: 'POST',
-            credentials: 'include'
+            credentials: 'include',
+            body: JSON.stringify({
+                'name_iv': iv,
+                'encrypted_name': encryptContent(name, localStorage.getItem('master_key'), iv),
+                'parent': currentFolder
+            })
         }).then(ret => ret.json())
         .then(data => {
             if(data['status'] != 'ok'){
@@ -161,6 +171,12 @@ export default function User(){
 
             }
         });
+    }
+
+    function attemptAddFolder() {
+        let name = (document.getElementById('create-folder-name') as HTMLInputElement).value;
+        if(name == '') setPopupErrorMessage('Please enter a file name');
+        else addFolder(name);
     }
 
     useEffect(() => {
@@ -265,12 +281,28 @@ export default function User(){
                 <div className = { styles.filesBackground } style = {{ top: fvstate=='My Files'?'150px':'100px' }}>
                     <Directory data = { null } changeDirectory = { null } isFirst = { true } isLast = { false } />
                     {
-                        testData.map((value, index) => {
+                        children.map((value, index) => {
                             return <Directory data = { value } changeDirectory = { setCurrentFolder } isFirst = { false } isLast = { index == testData.length-1 } />
                         })
                     }
                 </div>
             </div>
+            {
+                showFolderPopup?
+                <div className = { styles.popupContainer }>
+                    <div className = { styles.popupInnerContainer }>
+                        <h1 className = { styles.popupHeader }> Create Folder </h1>
+                        <h1 className = { styles.popupError }> { popupErrorMessage } </h1>
+                        <h1 className = { styles.popupEntryHeader }> Name </h1>
+                        <input id = 'create-folder-name' className = { styles.popupEntryInput } placeholder = 'Folder name' />
+                        <div className = { styles.popupBottom }>
+                            <button className = { styles.popupConfirm } onClick = { attemptAddFolder }> Confirm </button>
+                            <button className = { styles.popupCancel } onClick = { () => setFolderPopup(false) }> Cancel </button>
+                        </div>
+                    </div>
+                </div>
+                :null
+            }
         </div>
     )
 }

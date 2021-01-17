@@ -58,7 +58,7 @@ export default function Directory({data, changeDirectory, isFirst, isLast}: Dire
     return(
         <div className = { styles.fileEntryContainer } style = {{ borderBottom: isLast?'1px solid #00000033':'' }} onClick = { selectFile }>
             <div className = { styles.fileEntryIcon } style = {{ width: '2%' }}> { typeIcon } </div>
-            <h1 className = { styles.fileEntryComponent } style = {{ width: '40%' }}> { data['encrypted_name'] } </h1>
+            <h1 className = { styles.fileEntryComponent } style = {{ width: '40%' }}> { data['name'] } </h1>
 
             <h1 className = { styles.fileEntryComponentRight } style = {{ width: '10%' }}> { data['created'] } </h1>
             <h1 className = { styles.fileEntryComponentRight } style = {{ width: '10%' }}> { data['modified'] } </h1>
