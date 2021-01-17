@@ -281,7 +281,7 @@ export default function User() {
                                         if (data['status'] != 'ok') {
 
                                         } else {
-
+                                            updateChildren(currentFolder);
                                         }
                                     });
                                 });
