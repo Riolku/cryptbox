@@ -13,7 +13,7 @@ async function newDirectory(name, master_key) {
   };
 }
 
-async function decryptFileContent(requestData, master_key, iv) {
+async function decryptContent(requestData, master_key, iv) {
   let raw_data = loadBytesFromResponse(requestData);
 
   return decryptContent(raw_data, master_key, iv);
