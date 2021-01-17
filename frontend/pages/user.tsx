@@ -126,7 +126,7 @@ export default function User() {
 
             }else{
                 setFolderPopup(false);
-                setCurrentFolder(currentFolder);
+                updateChildren(currentFolder);
             }
         });
     }
@@ -182,8 +182,7 @@ export default function User() {
         setChildren(ret);
     }
 
-    useEffect(() => {
-        console.log("NEW", currentFolder);
+    function updateChildren(currentFolder) {
         if(currentFolder != null && currentFolder['id'] != undefined){
             if(folderPath.length > 0 && fvstate == folderPath[0]['name']){
                 let temp = [], found = false;
@@ -203,16 +202,19 @@ export default function User() {
 
             getreq('/directory/' + currentFolder['id'], data => {
                 console.log("GOT DIRECTORY", data);
-                if (data['status'] != 'ok') {
+                if(data['status'] != 'ok'){
 
-                } else {
-                    let ok = JSON.parse(JSON.stringify(data));
-                    console.log("TEST", ok);
-                    setParentFolder(data['parent']);
+                }else{
+                    // setParentFolder(data['parent']);
                     conv(data['children']);
                 }
             });
         }
+    }
+
+    useEffect(() => {
+        console.log("NEW", currentFolder);
+        updateChildren(currentFolder);
     }, [currentFolder]);
 
     useEffect(() => {
