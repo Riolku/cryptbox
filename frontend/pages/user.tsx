@@ -89,7 +89,7 @@ export default function User() {
     let [showFolderPopup, setFolderPopup] = useState(false);
 
     let [popupErrorMessage, setPopupErrorMessage] = useState('');
-    
+
     let [folderPath, setFolderPath] = useState([]);
 
     function _arrayBufferToBase64( buffer ) {
@@ -151,6 +151,9 @@ export default function User() {
             let folder_iv = loadIVfromResponse(folder['name_iv']);
             console.log(folder);
             console.log(master_key);
+
+            console.log(await decryptContent(folder['encrypted_name'], master_key, folder_iv));
+            
             ret.push(
                 {
                     'id': folder['id'],
@@ -201,7 +204,7 @@ export default function User() {
             getreq('/directory/' + currentFolder['id'], data => {
                 console.log("GOT DIRECTORY", data);
                 if (data['status'] != 'ok') {
-    
+
                 } else {
                     let ok = JSON.parse(JSON.stringify(data));
                     console.log("TEST", ok);
@@ -230,12 +233,12 @@ export default function User() {
                                         "name_iv": prepareIVforSending(name_iv),
                                         "content_iv": prepareIVforSending(b64_iv)
                                     }
-        
+
                                     postreq('/directory/' + currentFolder['id'] + '/file', ret, data => {
                                         if (data['status'] != 'ok') {
-                                            
+
                                         } else {
-                    
+
                                         }
                                     });
                                 });
@@ -267,7 +270,7 @@ export default function User() {
     }
 
     function getFromLocalStorage(): string{
-        
+
         let username = ""
 
         if(process.browser){
