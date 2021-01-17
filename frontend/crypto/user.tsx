@@ -1,7 +1,7 @@
 import { fromStringToBytes, fromBytesToString, b64encode, b64decode } from './utils';
 
 async function getUserMasterKey(username, password) {
-  let salt = deriveBitsFromUsername(username);
+  let salt = await deriveBitsFromUsername(username);
 
   return deriveKeyFromPasswordAndSalt(password, salt);
 }
@@ -23,15 +23,19 @@ async function importMasterKeyFromStorage(storage_string) {
 }
 
 async function prepareMasterKeyForLogin(master_key) {
+  let bytes = await window.crypto.subtle.exportKey("raw", master_key);
+  let byte_string = fromBytesToString(bytes);
+  let key = await importPBKDF2key(byte_string);
+
   let sending_key = await pbkdf2_deriveKey(
-    master_key,
+    key,
     fromStringToBytes('preparation'),
     1000
   );
 
-  let bytes = await window.crypto.subtle.exportKey("raw", sending_key);
+  bytes = await window.crypto.subtle.exportKey("raw", sending_key);
 
-  let byte_string = fromBytesToString(bytes);
+  byte_string = fromBytesToString(bytes);
 
   return b64encode(bytes);
 }

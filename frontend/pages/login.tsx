@@ -21,11 +21,16 @@ function login() {
         if(username == '') setErrorMessage('Username cannot be empty');
         else if(password == '') setErrorMessage('Password cannot be empty');
         else{
+            console.log("Attempting to retrieve master key.");
             getUserMasterKey(username, password).then(master_key => {
+              console.log("Key Acquired.");
+
               post('/authenticate', {
                   'username': username,
                   'password': prepareMasterKeyForLogin(master_key)
               }, data => {
+                  console.log("Login Success.");
+
                   if(data['status'] != 'ok') setErrorMessage('Login failed');
                   else{
                       exportMasterKeyForStorage(master_key).then(res => {
