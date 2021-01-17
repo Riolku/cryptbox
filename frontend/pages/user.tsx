@@ -17,6 +17,7 @@ import Navbar from '../components/Navbar';
 import Directory from '../components/Directory'
 import FileInfo from '../components/FileInfo';
 import Header from '../components/Header';
+import FolderPath from '../components/FolderPath';
 
 import { decryptContent, encryptContent, encryptRawContent, newIV, prepareBytesForSending, prepareIVforSending } from '../crypto/files'
 import { importMasterKeyFromStorage } from '../crypto/user'
@@ -111,7 +112,7 @@ export default function User() {
 
     const [username, setUsername] = useState("")
 
-    let [currentFolder, setCurrentFolder] = useState(0);
+    let [currentFolder, setCurrentFolder] = useState(null);
     let [parentFolder, setParentFolder] = useState(0);
     let [children, setChildren] = useState([]);
 
@@ -205,7 +206,7 @@ export default function User() {
     }, [currentFolder]);
 
     useEffect(() => {
-        setCurrentFolder(baseDirectoryIDs[fvstate]);
+        setCurrentFolder({ 'name': fvstate, 'id': baseDirectoryIDs[fvstate] });
     }, [fvstate]);
 
     useEffect(() => {
@@ -247,7 +248,7 @@ export default function User() {
                     'My Files': data['home'],
                     'Trash': data['trash']
                 };
-                setCurrentFolder(data['home']);
+                setCurrentFolder({ 'name': 'My Files', 'id': data['home'] });
                 setFolderPath([{'name': 'My Files', 'id': data['home']}]);
                 //setFolderPath([{'name': 'My Files', 'id': data['home']}]);
                 setBaseIDs(ret);
@@ -317,7 +318,7 @@ export default function User() {
                     <Directory data = { null } changeDirectory = { null } isFirst = { true } isLast = { false } />
                     {
                         children.map((value, index) => {
-                            return <Directory data = { value } changeDirectory = { setCurrentFolder } isFirst = { false } isLast = { index == testData.length-1 } />
+                            return <Directory data = { value } changeDirectory = { () => setCurrentFolder({ 'name': value['name'], 'id': value['id'] }) } isFirst = { false } isLast = { index == testData.length-1 } />
                         })
                     }
                 </div>
