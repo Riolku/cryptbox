@@ -176,7 +176,7 @@ export default function User() {
     }
 
     useEffect(() => {
-        if(currentFolder != null){
+        if(currentFolder != null && currentFolder['id'] != undefined){
             if(folderPath.length > 0 && fvstate == folderPath[0]['name']){
                 let temp = [], found = false;
                 for(let entry of folderPath){
@@ -249,7 +249,7 @@ export default function User() {
                     'Trash': data['trash']
                 };
                 setCurrentFolder({ 'name': 'My Files', 'id': data['home'] });
-                setFolderPath([{'name': 'My Files', 'id': data['home']}]);
+                // setFolderPath([{'name': 'My Files', 'id': data['home']}]);
                 //setFolderPath([{'name': 'My Files', 'id': data['home']}]);
                 setBaseIDs(ret);
             }
