@@ -93,7 +93,7 @@ function changeToTime(epoch) {
 export default function User() {
     const router = useRouter();
 
-    const [fvstate, setFVState] = useState("My Files");
+    const [fvstate, setFVState] = useState("");
     const [uploadedFile, setUpload] = useState(null)
 
     const [username, setUsername] = useState("")
@@ -228,7 +228,10 @@ export default function User() {
                     temp.push(currentFolder);
                     setFolderPath(temp);
                 }else setFolderPath(temp);
-            }else setFolderPath([{'name': fvstate, 'id': baseDirectoryIDs[fvstate] }]);
+            }else{
+                console.log("bruga", baseDirectoryIDs[fvstate]);
+                setFolderPath([{'name': fvstate, 'id': baseDirectoryIDs[fvstate] }]);
+            }
 
             getreq('/directory/' + currentFolder['id'], data => {
                 console.log("GOT DIRECTORY", data);
@@ -248,8 +251,16 @@ export default function User() {
     }, [currentFolder]);
 
     useEffect(() => {
+        // if(baseDirectoryIDs[fvstate] != undefined)
+        console.log("CHANGED");
         setCurrentFolder({ 'name': fvstate, 'id': baseDirectoryIDs[fvstate] });
     }, [fvstate]);
+
+    useEffect(() => {
+        console.log("GOING TO MY FILES");
+        setFVState('My Files');
+        setCurrentFolder({ 'name': 'My Files', 'id': baseDirectoryIDs['My Files'] });
+    }, [baseDirectoryIDs]);
 
     useEffect(() => {
         if(uploadedFile != null){
@@ -293,10 +304,11 @@ export default function User() {
                     'My Files': data['home'],
                     'Trash': data['trash']
                 };
-                setCurrentFolder({ 'name': 'My Files', 'id': data['home'] });
+                console.log("ID", data['home']);
+                setBaseIDs(ret);
+                // setCurrentFolder({ 'name': 'My Files', 'id': data['home'] });
                 // setFolderPath([{'name': 'My Files', 'id': data['home']}]);
                 //setFolderPath([{'name': 'My Files', 'id': data['home']}]);
-                setBaseIDs(ret);
             }
         });
     }
