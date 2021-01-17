@@ -63,4 +63,4 @@ function prepareBytesForSending(bytes) {
   return b64encode(fromBytesToString(bytes));
 }
 
-export { newDirectory, encryptContent, newIV, loadIVfromResponse, prepareIVforSending, prepareBytesForSending, loadBytesFromResponse };
+export { newDirectory, encryptContent, decryptContent, newIV, loadIVfromResponse, prepareIVforSending, prepareBytesForSending, loadBytesFromResponse };
