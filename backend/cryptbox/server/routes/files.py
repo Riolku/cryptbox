@@ -64,7 +64,7 @@ def format_file(file, c = False, p = False):
     }
   return o
 
-@app.route("/directory/<id>", methods = ["GET"])
+@app.route("/directory/<int:id>", methods = ["GET"])
 @wrap_request(False)
 @verify_login
 def get_directory(id):
@@ -73,7 +73,7 @@ def get_directory(id):
     return {"status": "fail", "error": "forbidden"}
   return {"status": "ok", **format_dir(d)}
 
-@app.route("/file/<id>", methods = ["GET"])
+@app.route("/file/<int:id>", methods = ["GET"])
 @wrap_request(False)
 @verify_login
 def get_file(id):
@@ -82,7 +82,7 @@ def get_file(id):
     return {"status": "fail", "error": "forbidden"}
   return {"status": "ok", **format_file(id, True, True)}
 
-@app.route("/directory/<id>", methods = ["PATCH"])
+@app.route("/directory/<int:id>", methods = ["PATCH"])
 @wrap_request()
 @verify_login
 def modify_directory(id):
@@ -95,7 +95,7 @@ def modify_directory(id):
   db.session.commit()
   return {"status": "ok"}
 
-@app.route("/file/<id>", methods = ["PATCH"])
+@app.route("/file/<int:id>", methods = ["PATCH"])
 @wrap_request()
 @verify_login
 def modify_file(id):
@@ -115,7 +115,7 @@ def modify_file(id):
   db.session.commit()
   return {"status": "ok"}
 
-@app.route("/directory/<id>/directory", methods = ["POST"])
+@app.route("/directory/<int:id>/directory", methods = ["POST"])
 @wrap_request()
 @verify_login
 def create_subdir(id):
@@ -127,7 +127,7 @@ def create_subdir(id):
   db.session.commit()
   return {"status": "ok", "id": d.id}
 
-@app.route("/directory/<id>/file", methods = ["POST"])
+@app.route("/directory/<int:id>/file", methods = ["POST"])
 @wrap_request()
 @verify_login
 def create_file(id):
@@ -139,7 +139,7 @@ def create_file(id):
   db.session.commit()
   return {"status": "ok", "id": f.id}
 
-@app.route("/directory/<id>", methods = ["DELETE"])
+@app.route("/directory/<int:id>", methods = ["DELETE"])
 @wrap_request(False)
 @verify_login
 def delete_directory(id):
@@ -150,7 +150,7 @@ def delete_directory(id):
   db.session.commit()
   return {"status": "ok"}
 
-@app.route("/file/<id>", methods = ["DELETE"])
+@app.route("/file/<int:id>", methods = ["DELETE"])
 @wrap_request(False)
 @verify_login
 def delete_file(id):
