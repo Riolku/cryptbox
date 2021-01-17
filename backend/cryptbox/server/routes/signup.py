@@ -23,10 +23,15 @@ def register():
   salt = os.urandom(16)
   u = Users(username = username, password_hash = argon2.argon2_hash(password, salt), salt = salt)
   db.session.add(u)
-  h = Directories(owner = u.id, encrypted_name = request.json["home" ], name_iv = request.json["home_iv" ])
-  t = Directories(owner = u.id, encrypted_name = request.json["trash"], name_iv = request.json["trash_iv"])
+  db.session.commit()
+  h = Directories(owner = u.id, encrypted_name = request.json["home" ]["encrypted_name"], name_iv = request.json["home" ]["iv"])
+  t = Directories(owner = u.id, encrypted_name = request.json["trash"]["encrypted_name"], name_iv = request.json["trash"]["iv"])
   db.session.add(h)
   db.session.add(t)
+  db.session.commit()
+  u.home = h.id
+  u.trash = t.id
+  db.session.add(u)
   db.session.commit()
   g.setdefault("cookies", {})["token"] = make_jwt({"uid": u.id, "at": int(time.time()), "exp": int(time.time()) + 604800}, app.config["SECRET_KEY"])
   return {"status": "ok", "username": u.username}

@@ -39,7 +39,7 @@ function Register() {
                 'trash' : trash
             }, data => {
                 if(data['status'] != 'ok') {
-                  if (data['error'] == 'username_taken') setErrorMessage('This username is already in user!');
+                  if (data['error'] == 'username_taken') setErrorMessage('This username is already in use!');
                   else if (data['error'] == 'username_invalid') setErrorMessage('Usernames can only contain letters, numbers, underscores, and periods!');
                 }
                 else{
