@@ -179,7 +179,7 @@ export default function User(){
     return(
         <div>
             <div style = {{ position: 'fixed', left: 0, height: '100vh', width: '230px', top: '-9px', background: 'rgba(0,0,0,0.02)' }}>
-                <img src = '/images/gradientC.png' style = {{ position: 'absolute', left: '10%', top: '3.5%', height: '50px' }} />
+                <img src = '/images/gradientC.png' style = {{ cursor: 'pointer', position: 'absolute', left: '10%', top: '3.5%', height: '50px' }} onClick = { () => router.push('/') } />
                 <List style = {{ top: '108px' }}>
                     <ListItem button selected={fvstate === "My Files"} key={"My Files"} onClick={(ev)=>{handleListItemClick(ev, "My Files")}}>
                         <ListItemIcon><AppsIcon /></ListItemIcon>
@@ -205,16 +205,16 @@ export default function User(){
                 {
                     fvstate == 'My Files'?
                     <div>
-                        <button className = { styles.newFolder } onClick = { addFolder }><AddIcon fontSize="small" style={{ position:'absolute', left:'5%', top:'20%' }}/> <h1 style={{ position: 'absolute', top: '-7.5%', left: '25%', fontSize: '15px', fontFamily: 'var(--font)' }}>Add Folder </h1></button>
+                        <button className = { styles.newFolder } onClick = { addFolder }><AddIcon fontSize="small" style={{ position:'absolute', left:'5%', top:'18%' }}/> <h1 style={{ position: 'absolute', top: '-12%', left: '25%', fontSize: '15px', fontFamily: 'var(--font)' }}>Add Folder </h1></button>
                         <div className = { styles.uploadFile }>
-                            <PublishIcon style={{ position:'absolute', left:'5%', top:'7%' }}/>
-                            <h1 style = {{ position: 'absolute', top: '5%', left: '60%', transform: 'translate(-50%,-20%)', fontSize: '15px', fontFamily: 'var(--font)' }}> Upload </h1>
+                            <PublishIcon style={{ position:'absolute', left:'5%', top:'10%' }}/>
+                            <h1 style = {{ position: 'absolute', top: '5%', left: '60%', transform: 'translate(-50%,-32%)', fontSize: '15px', fontFamily: 'var(--font)' }}> Upload </h1>
                             <FilePicker onFile={ (file)=>{setUpload(file)} }/>
                         </div>
                     </div>
                     :null
                 }
-                <div className = { styles.filesBackground } style = {{ top: fvstate=='My Files'?'14%':'9%' }}>
+                <div className = { styles.filesBackground } style = {{ top: fvstate=='My Files'?'150px':'100px' }}>
                     <Directory data = { null } changeDirectory = { null } isFirst = { true } isLast = { false } />
                     {
                         testData.map((value, index) => {
