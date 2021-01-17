@@ -31,11 +31,19 @@ async function newIV() {
 }
 
 function loadIVfromResponse(iv) {
-  return fromStringToBytes(b64decode(iv));
+  return loadBytesFromResponse(iv);
+}
+
+function loadBytesFromResponse(response_text) {
+  return fromStringToBytes(b64decode(response_text));
 }
 
 function prepareIVforSending(iv) {
-  return b64encode(fromBytesToString(iv));
+  return prepareBytesForSending(iv);
+}
+
+function prepareBytesForSending(bytes) {
+  return b64encode(fromBytesToString(bytes));
 }
 
 export { newDirectory, encryptContent, newIV, loadIVfromResponse, prepareIVforSending };
