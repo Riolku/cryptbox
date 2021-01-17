@@ -155,6 +155,8 @@ def create_file(id):
 @verify_login
 def delete_directory(id):
   d = Directories.query.filter_by(id = id).first()
+
+  print(d, d.owner, g.user.id)
   if d is None or d.owner != g.user.id:
     return {"status": "fail", "error": "forbidden"}
   d.parent = g.user.trash
