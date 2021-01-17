@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
 import Navbar from '../components/Navbar';
+import Header from '../components/Header';
 
 import styles from '../styles/Login.module.css';
 
@@ -48,6 +49,7 @@ function login() {
 
     return (
         <div>
+            <Header title="Login"/>
             <Navbar linkCol = 'black' />
             <div className = { styles.mainBackground }>
                 <div className = { styles.loginBox }>
