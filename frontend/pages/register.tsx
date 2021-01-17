@@ -34,7 +34,7 @@ function Register() {
 
             post('/register', {
                 'username': username,
-                'password': prepareMasterKeyForLogin(master_key),
+                'password': await prepareMasterKeyForLogin(master_key),
                 'home' : home,
                 'trash' : trash
             }, data => {

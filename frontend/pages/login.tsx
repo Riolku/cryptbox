@@ -14,7 +14,7 @@ function login() {
 
     const router = useRouter();
 
-    function submitLogin() {
+    async function submitLogin() {
         let username = (document.getElementById('loginUsernameField') as HTMLInputElement).value;
         let password = (document.getElementById('loginPasswordField') as HTMLInputElement).value;
 
@@ -22,23 +22,23 @@ function login() {
         else if(password == '') setErrorMessage('Password cannot be empty');
         else{
             console.log("Attempting to retrieve master key.");
-            getUserMasterKey(username, password).then(master_key => {
-                console.log("Key Acquired.");
+            let master_key = await getUserMasterKey(username, password);
 
-                post('/authenticate', {
-                    'username': username,
-                    'password': prepareMasterKeyForLogin(master_key)
-                }, data => {
-                    console.log("Login Success.");
+            console.log("Key Acquired.");
 
-                    if(data['status'] != 'ok') setErrorMessage('Login failed');
-                    else{
-                        exportMasterKeyForStorage(master_key).then(res => {
-                            localStorage.setItem('master_key', res);
-                            window.location.reload();
-                        });
-                    }
-                });
+            post('/authenticate', {
+                'username': username,
+                'password': await prepareMasterKeyForLogin(master_key)
+            }, data => {
+                console.log("Login Success.");
+
+                if(data['status'] != 'ok') setErrorMessage('Login failed');
+                else{
+                    let storage_key = await exportMasterKeyForStorage(master_key);
+
+                    localStorage.setItem('master_key', storage_key);
+                    window.location.reload();
+                }
             });
         }
     }
