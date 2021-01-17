@@ -19,6 +19,8 @@ export default function Home() {
                         <button className = { styles.homeTryButton }> SIGN UP NOW </button>
                     </Link>
                 </div>
+                <img src = '/images/storagePreview.png' className = { styles.imagePreview } />
+                <img src = '/images/storagePreview.png' className = { styles.imagePreview2 } />
             </div>
         </div>
     );

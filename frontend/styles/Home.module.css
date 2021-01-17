@@ -31,7 +31,8 @@
 
 .homeDesc {
     position: relative;
-    width: 400px;
+    /* width: 400px; */
+    width: calc(70% + 140px);
     /* height: 50%; */
     /* left: 22%; */
     font-size: 17px;
@@ -63,4 +64,22 @@
 .homeTryButton:hover {
     background: rgb(138, 132, 202);
     transition: 0.3s;
+}
+
+.imagePreview {
+    width: 40%;
+    position: absolute;
+    left: calc(35% + 140px);
+    top: 280px;
+    border-radius: 10px;
+}
+
+.imagePreview2 {
+    width: 40%;
+    position: absolute;
+    left: calc(35% + 155px);
+    top: 295px;
+    border-radius: 10px;
+    /* border: 1px solid rgba(0,0,0,0.2); */
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
 }
