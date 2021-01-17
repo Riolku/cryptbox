@@ -26,7 +26,7 @@ def verify_login(f):
 @wrap_request(False)
 @verify_login
 def base_dirs():
-  return {"status": "okay", "home": g.user.home, "trash": g.user.trash}
+  return {"status": "ok", "home": g.user.home, "trash": g.user.trash}
 
 def format_dir(d, c = False):
   o = {
@@ -71,7 +71,7 @@ def get_directory(id):
   d = Directories.query.filter_by(id = id).first()
   if d is None or d.owner != g.user.id:
     return {"status": "fail", "error": "forbidden"}
-  return {"status": "ok", **format_dir(d)}
+  return {"status": "ok", **format_dir(d, True)}
 
 @app.route("/file/<int:id>", methods = ["GET"])
 @wrap_request(False)

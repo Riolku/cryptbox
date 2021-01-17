@@ -134,17 +134,22 @@ export default function User() {
         let iv = await newIV();
         setPopupErrorMessage('');
         console.log("BASE", baseDirectoryIDs);
+        console.log(localStorage.getItem('master_key'));
+        let master = await importMasterKeyFromStorage(localStorage.getItem('master_key'));
+        console.log("GOT MASTER");
+        let data = await encryptContent(name, master, iv);
+        console.log("DONE DATA");
         fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder + '/directory', {
             method: 'POST',
             credentials: 'include',
             body: JSON.stringify({
                 'name_iv': iv,
-                'encrypted_name': await encryptContent(name, await importMasterKeyFromStorage(localStorage.getItem('master_key')), iv),
+                'encrypted_name': data,
                 'parent': currentFolder
             })
         }).then(ret => ret.json())
         .then(data => {
-            console.log(data);
+            console.log("ADDED FOLDER", data);
             if(data['status'] != 'ok'){
 
             }else{
@@ -165,6 +170,7 @@ export default function User() {
             credentials: 'include'
         }).then(ret => ret.json())
         .then(data => {
+            console.log("GOT DIRECTORY", data);
             if(data['status'] != 'ok'){
 
             }else{
@@ -221,9 +227,9 @@ export default function User() {
             }else{
                 let ret = {
                     'My Files': data['home'],
-                    'Shared With Me': data['shared'],
                     'Trash': data['trash']
                 };
+                setCurrentFolder(data['home']);
                 setBaseIDs(ret);
             }
         });

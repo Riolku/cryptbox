@@ -15,28 +15,22 @@ CORS(app)
 
 @app.before_request
 def check_login():
-  print(request.cookies)
   g.user = None
   g.token = None
   token = request.cookies.get("token")
   if token is not None:
     try:
       obj = verify_jwt(token, app.secret_key)
-      user = Users.query.filter_by(id = obj["uid"])
+      user = Users.query.filter_by(id = obj["uid"]).first()
       if user:
         g.user = user
         g.token = token
-        print("logged in?")
-      else:
-        print("no user here")
-    except Exception as e:
-      print("login fail because of", e, type(e))
+    except:
       pass
 
 @app.after_request
 def add_cookie(response):
   if g.user:
-    print("user found, token is:", g.token)
     response.set_cookie("token", g.token, samesite = "None", secure = True)
   return response
 
