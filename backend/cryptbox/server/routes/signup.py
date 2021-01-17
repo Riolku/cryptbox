@@ -20,10 +20,6 @@ def register():
     return {"status": "fail", "error": "username_taken"}
   if set(username) - set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_."):
     return {"status": "fail", "error": "username_invalid"}
-  if len(password) < 12:
-    return {"status": "fail", "error": "password_short"}
-  if set(password) & set("0123456789") == set() or set(password) & set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") == set():
-    return {"status": "fail", "error": "password_simple"}
   salt = os.urandom(16)
   u = Users(username = username, password_hash = argon2.argon2_hash(password, salt), salt = salt)
   db.session.add(u)

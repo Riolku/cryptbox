@@ -8,6 +8,8 @@ import AppsIcon from '@material-ui/icons/Apps';
 import FolderSharedIcon from '@material-ui/icons/FolderShared';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import PublishIcon from '@material-ui/icons/Publish';
+import AddIcon from '@material-ui/icons/Add';
 
 import FilePicker from '../components/FilePicker';
 import Navbar from '../components/Navbar';
@@ -182,10 +184,10 @@ export default function User(){
                         <ListItemIcon><AppsIcon /></ListItemIcon>
                         <h1 className = { styles.sidebarText }> MY FILES </h1>
                     </ListItem>
-                    <ListItem button selected={fvstate === "Shared With Me"} key={"Shared With Me"} onClick={(ev)=>{handleListItemClick(ev, "Shared With Me")}}>
+                    {/*<ListItem button selected={fvstate === "Shared With Me"} key={"Shared With Me"} onClick={(ev)=>{handleListItemClick(ev, "Shared With Me")}}>
                         <ListItemIcon><FolderSharedIcon /></ListItemIcon>
                         <h1 className = { styles.sidebarText }> SHARED WITH ME </h1>
-                    </ListItem>
+                    </ListItem>*/}
                     <ListItem button selected={fvstate === "Trash"} key={"Trash"} onClick={(ev)=>{handleListItemClick(ev, "Trash")}}>
                         <ListItemIcon><DeleteIcon /></ListItemIcon>
                         <h1 className = { styles.sidebarText }> TRASH </h1>
@@ -202,10 +204,11 @@ export default function User(){
                 {
                     fvstate == 'My Files'?
                     <div>
-                        <button className = { styles.newFolder } onClick = { addFolder }> Add Folder </button>
+                        <button className = { styles.newFolder } onClick = { addFolder }><AddIcon fontSize="small" style={{ position:'absolute', left:'5%', top:'20%' }}/> <h1 style={{ position: 'absolute', top: '-7.5%', left: '25%', fontSize: '15px', fontFamily: 'var(--font)' }}>Add Folder </h1></button>
                         <div className = { styles.uploadFile }>
-                            <h1 style = {{ position: 'absolute', top: '0%', left: '50%', transform: 'translate(-50%,-20%)', fontSize: '15px', fontFamily: 'var(--font)' }}> Upload </h1>
-                            <FilePicker onFile={ setUpload }></FilePicker>
+                            <PublishIcon style={{ position:'absolute', left:'5%', top:'7%' }}/>
+                            <h1 style = {{ position: 'absolute', top: '5%', left: '60%', transform: 'translate(-50%,-20%)', fontSize: '15px', fontFamily: 'var(--font)' }}> Upload </h1>
+                            <FilePicker onFile={ (file)=>{setUpload(file)} }/>
                         </div>
                     </div>
                     :null

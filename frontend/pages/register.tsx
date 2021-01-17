@@ -29,13 +29,21 @@ function Register() {
             let home = await newDirectory("Home", master_key);
             let trash = await newDirectory("Trash", master_key);
 
+            console.log(home);
+            console.log(trash);
+
+            console.log(await prepareMasterKeyForLogin(master_key));
+
             post('/register', {
                 'username': username,
-                'password': prepareMasterKeyForLogin(master_key),
+                'password': await prepareMasterKeyForLogin(master_key),
                 'home' : home,
                 'trash' : trash
             }, data => {
-                if(data['status'] != 'ok') setErrorMessage('Login failed');
+                if(data['status'] != 'ok') {
+                  if (data['error'] == 'username_taken') setErrorMessage('This username is already in user!');
+                  else if (data['error'] == 'username_invalid') setErrorMessage('Usernames can only contain letters, numbers, underscores, and periods!');
+                }
                 else{
                     exportMasterKeyForStorage(master_key).then(storage_key => {
                         localStorage.setItem('master_key', storage_key);

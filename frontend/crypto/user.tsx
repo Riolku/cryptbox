@@ -46,13 +46,11 @@ async function prepareMasterKeyForLogin(master_key) {
 
   byte_string = fromBytesToString(bytes);
 
-  return b64encode(bytes);
+  return b64encode(byte_string);
 }
 
 async function deriveBitsFromUsername(username) {
   let key = await importPBKDF2key(username);
-
-  console.log(key);
 
   return window.crypto.subtle.deriveBits(
     {
@@ -75,10 +73,6 @@ async function deriveKeyFromPasswordAndSalt(password, salt) {
 }
 
 async function pbkdf2_deriveKey(key, salt, iterations) {
-  console.log(key);
-  console.log(salt);
-  console.log(iterations);
-
   return window.crypto.subtle.deriveKey(
     {
       name : "PBKDF2",

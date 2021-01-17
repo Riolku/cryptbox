@@ -1,5 +1,4 @@
 import Button from '@material-ui/core/Button';
-import PublishIcon from '@material-ui/icons/Publish';
 import React, { useRef } from 'react';
 
 import styles from '../styles/User.module.css';
