@@ -23,22 +23,22 @@ function login() {
         else{
             console.log("Attempting to retrieve master key.");
             getUserMasterKey(username, password).then(master_key => {
-              console.log("Key Acquired.");
+                console.log("Key Acquired.");
 
-              post('/authenticate', {
-                  'username': username,
-                  'password': prepareMasterKeyForLogin(master_key)
-              }, data => {
-                  console.log("Login Success.");
+                post('/authenticate', {
+                    'username': username,
+                    'password': prepareMasterKeyForLogin(master_key)
+                }, data => {
+                    console.log("Login Success.");
 
-                  if(data['status'] != 'ok') setErrorMessage('Login failed');
-                  else{
-                      exportMasterKeyForStorage(master_key).then(res => {
-                          localStorage.setItem('master_key', res);
-                          window.location.reload();
-                      });
-                  }
-              });
+                    if(data['status'] != 'ok') setErrorMessage('Login failed');
+                    else{
+                        exportMasterKeyForStorage(master_key).then(res => {
+                            localStorage.setItem('master_key', res);
+                            window.location.reload();
+                        });
+                    }
+                });
             });
         }
     }

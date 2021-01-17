@@ -25,7 +25,6 @@ function Register() {
         else if(password != repassword) setErrorMessage('Passwords do not match');
         else{
             let master_key = getUserMasterKey(username, password);
-
             post('/register', {
                 'username': username,
                 'password': prepareMasterKeyForLogin(master_key),
