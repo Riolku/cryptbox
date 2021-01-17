@@ -112,7 +112,7 @@ const fileInfo = ({ fileInfo, closeInfo }: { fileInfo: Object, closeInfo: Functi
 
                     <div className={styles.fileInfoEntry}>
                         <h1 className = { styles.fileInfoEntryHeader }> Download </h1>
-                        <Button variant="contained" color="default" startIcon={<GetAppIcon/>} onClick={()=>{
+                        <Button variant="contained" color="default" startIcon={<GetAppIcon/>} style = {{ fontFamily: 'var(--font)' }} onClick={()=>{
                             getreq('/file/'+fileInfo['id'], (data)=>{
                                 importMasterKeyFromStorage(localStorage.getItem('master_key')).then((master_key)=>{
                                     let name_iv = loadIVfromResponse(data['name_iv'])

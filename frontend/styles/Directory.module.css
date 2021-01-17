@@ -37,11 +37,6 @@
     transition: 0.3s;
 }
 
-.fileEntryContainer:hover {
-    background: rgba(0,0,0,0.1);
-    transition: 0.3s;
-}
-
 .fileEntryIcon {
     margin: 0;
     position: relative;
