@@ -19,13 +19,14 @@ import FileInfo from '../components/FileInfo';
 import Header from '../components/Header';
 import FolderPath from '../components/FolderPath';
 
-import { decryptContent, encryptContent, encryptRawContent, newIV, prepareBytesForSending, prepareIVforSending } from '../crypto/files'
+import { newDirectory, decryptContent, encryptContent, encryptRawContent, newIV, prepareBytesForSending, prepareIVforSending, loadIVfromResponse } from '../crypto/files'
 import { importMasterKeyFromStorage } from '../crypto/user'
 import { fromBytesToString } from '../crypto/utils'
 
 import styles from '../styles/User.module.css';
 
 import { getreq, postreq } from './request-utils';
+import { SettingsPhoneTwoTone } from '@material-ui/icons';
 
 const testData = [
     {
@@ -68,40 +69,6 @@ function prependZero(num) {
 function changeToDate(epoch) {
     let date = new Date(epoch);
     return prependZero(date.getMonth()) + '-' + prependZero(date.getDay()) + '-' + date.getFullYear();
-}
-
-function conv(children) {
-    let ret = [], master_key = localStorage.getItem('master_key');
-    children['directories'].sort(function(a, b) {
-        if(a['modified'] == b['modified']) return a['created'] > b['created'];
-        return a['modified'] > b['modified'];
-    });
-    children['files'].sort(function(a, b) {
-        if(a['modified'] == b['modified']) return a['created'] > b['created'];
-        return a['modified'] > b['modified'];
-    });
-    for(let folder of children['directories']){
-        let folder_iv = folder['name_iv'];
-        ret.push(
-            {
-                'name': decryptContent(folder['encrypted_name'], master_key, folder_iv),
-                'modified': changeToDate(folder['modified']),
-                'created': changeToDate(folder['created']),
-                'parent': folder['parent']
-            }
-        );
-    }
-    for(let file of children['files']){
-        let file_iv = file['name_iv'];
-        ret.push(
-            {
-                'name': decryptContent(file['encrypted_name'], master_key, file_iv),
-                'modified': changeToDate(file['modified']),
-                'created': changeToDate(file['created'])
-            }
-        );
-    }
-    return ret;
 }
 
 export default function User() {
@@ -147,24 +114,19 @@ export default function User() {
     }
 
     async function addFolder(name) {
-        let iv = await newIV();
-        setPopupErrorMessage('');
-        console.log("BASE", baseDirectoryIDs);
-        console.log(localStorage.getItem('master_key'));
         let master = await importMasterKeyFromStorage(localStorage.getItem('master_key'));
-        console.log("GOT MASTER");
-        let data = await encryptContent(name, master, iv);
-        console.log("DONE DATA");
-        postreq('/directory/' + currentFolder + '/directory', {
-            'name_iv': iv,
-            'encrypted_name': data,
-            'parent': currentFolder
+        let temp = await newDirectory(name, master);
+        postreq('/directory/' + currentFolder['id'] + '/directory', {
+            'name_iv': temp['iv'],
+            'encrypted_name': temp['encrypted_name'],
+            'parent': currentFolder['id']
         }, data => {
             console.log("ADDED FOLDER", data);
             if(data['status'] != 'ok'){
 
             }else{
-
+                setFolderPopup(false);
+                setCurrentFolder(currentFolder);
             }
         });
     }
@@ -173,6 +135,45 @@ export default function User() {
         let name = (document.getElementById('create-folder-name') as HTMLInputElement).value;
         if(name == '') setPopupErrorMessage('Please enter a folder name');
         else addFolder(name);
+    }
+
+    async function conv(children) {
+        let ret = [], master_key = await importMasterKeyFromStorage(localStorage.getItem('master_key'));
+        children['directories'].sort(function(a, b) {
+            if(a['modified'] == b['modified']) return a['created'] > b['created'];
+            return a['modified'] > b['modified'];
+        });
+        children['files'].sort(function(a, b) {
+            if(a['modified'] == b['modified']) return a['created'] > b['created'];
+            return a['modified'] > b['modified'];
+        });
+        for(let folder of children['directories']){
+            let folder_iv = loadIVfromResponse(folder['name_iv']);
+            console.log(folder);
+            console.log(master_key);
+            ret.push(
+                {
+                    'name': fromBytesToString(await decryptContent(folder['encrypted_name'], master_key, folder_iv)),
+                    'modified': changeToDate(folder['modified']),
+                    'created': changeToDate(folder['created']),
+                    'parent': folder['parent'],
+                    'type': 'folder'
+                }
+            );
+        }
+        for(let file of children['files']){
+            let file_iv = file['name_iv'];
+            ret.push(
+                {
+                    'name': fromBytesToString(await decryptContent(file['encrypted_name'], master_key, file_iv)),
+                    'modified': changeToDate(file['modified']),
+                    'created': changeToDate(file['created']),
+                    'type': 'file'
+                }
+            );
+        }
+        console.log(ret);
+        setChildren(ret);
     }
 
     useEffect(() => {
@@ -198,8 +199,10 @@ export default function User() {
                 if (data['status'] != 'ok') {
     
                 } else {
+                    let ok = JSON.parse(JSON.stringify(data));
+                    console.log("TEST", ok);
                     setParentFolder(data['parent']);
-                    setChildren(conv(data['children']));
+                    conv(data['children']);
                 }
             });
         }
@@ -305,7 +308,7 @@ export default function User() {
                 {
                     fvstate == 'My Files'?
                     <div>
-                        <button className = { styles.newFolder } onClick = { addFolder }><AddIcon fontSize="small" style={{ position:'absolute', left:'5%', top:'18%' }}/> <h1 style={{ position: 'absolute', top: '-12%', left: '25%', fontSize: '15px', fontFamily: 'var(--font)' }}>Add Folder </h1></button>
+                        <button className = { styles.newFolder } onClick = { () => setFolderPopup(true) }><AddIcon fontSize="small" style={{ position:'absolute', left:'5%', top:'18%' }}/> <h1 style={{ position: 'absolute', top: '-12%', left: '25%', fontSize: '15px', fontFamily: 'var(--font)' }}>Add Folder </h1></button>
                         <div className = { styles.uploadFile }>
                             <PublishIcon style={{ position:'absolute', left:'5%', top:'10%' }}/>
                             <h1 style = {{ position: 'absolute', top: '5%', left: '60%', transform: 'translate(-50%,-32%)', fontSize: '15px', fontFamily: 'var(--font)' }}> Upload </h1>

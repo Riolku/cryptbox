@@ -37,7 +37,7 @@ export default function Directory({data, changeDirectory, isFirst, isLast}: Dire
     const router = useRouter();
 
     function selectFile() {
-        if(data['extension'] == 'folder') changeDirectory();
+        if(data['type'] == 'folder') changeDirectory();
         else router.push('/user/file/' + data['id']);
     }
 
@@ -53,7 +53,9 @@ export default function Directory({data, changeDirectory, isFirst, isLast}: Dire
         )
     }
 
-    let typeIcon = cont(data['extension'], mappedIcon)?mappedIcon[data['extension']]:<AttachFileIcon />;
+    let typeIcon = <FolderIcon />
+    if(data['type'] != 'folder')
+        typeIcon = cont(data['extension'], mappedIcon)?mappedIcon[data['extension']]:<AttachFileIcon />;
 
     return(
         <div className = { styles.fileEntryContainer } style = {{ borderBottom: isLast?'1px solid #00000033':'' }} onClick = { selectFile }>
