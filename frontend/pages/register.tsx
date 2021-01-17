@@ -32,6 +32,8 @@ function Register() {
             console.log(home);
             console.log(trash);
 
+            console.log(await prepareMasterKeyForLogin(master_key));
+
             post('/register', {
                 'username': username,
                 'password': await prepareMasterKeyForLogin(master_key),

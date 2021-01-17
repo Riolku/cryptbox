@@ -42,11 +42,19 @@ async function prepareMasterKeyForLogin(master_key) {
     1000
   );
 
+  console.log(bytes);
+  console.log(byte_string);
+  console.log(key);
+  console.log(sending_key);
+
   bytes = await window.crypto.subtle.exportKey("raw", sending_key);
 
   byte_string = fromBytesToString(bytes);
 
-  return b64encode(bytes);
+  console.log(byte_string)
+
+
+  return b64encode(byte_string);
 }
 
 async function deriveBitsFromUsername(username) {
