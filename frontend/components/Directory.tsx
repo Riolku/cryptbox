@@ -37,8 +37,10 @@ export default function Directory({data, changeDirectory, isFirst, isLast}: Dire
     const router = useRouter();
 
     function selectFile() {
-        if(data['type'] == 'folder') changeDirectory();
-        else router.push('/user/file/' + data['id']);
+        if(data['type'] == 'folder'){
+            console.log("CLICKED");
+            changeDirectory({ 'name': data['name'], 'id': data['id'] });
+        }else router.push('/user/file/' + data['id']);
     }
 
     if(isFirst){
