@@ -156,7 +156,6 @@ export default function User(){
 
     if(firstTime){
         setFirstTime(false);
-        console.log("CALLING");
         fetch('https://api.cryptbox.kgugeler.ca/user/dirs', {
             method: 'GET',
             credentials: 'include'
