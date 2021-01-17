@@ -136,6 +136,7 @@ export default function User(){
     useEffect(() => {
         if(uploadedFile != null){
             let ret = new FormData();
+            console.log(uploadedFile);
             ret.append('file', uploadedFile, uploadedFile.name);
 
             fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder + '/file', {
@@ -206,9 +207,7 @@ export default function User(){
                         <button className = { styles.newFolder } onClick = { addFolder }> Add Folder </button>
                         <div className = { styles.uploadFile }>
                             <h1 style = {{ position: 'absolute', top: '0%', left: '50%', transform: 'translate(-50%,-20%)', fontSize: '15px', fontFamily: 'var(--font)' }}> Upload </h1>
-                            <FilePicker onFile={(file)=>{
-                                setUpload(file.name)
-                            }}></FilePicker>
+                            <FilePicker onFile={ setUpload }></FilePicker>
                         </div>
                     </div>
                     :null
