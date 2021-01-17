@@ -8,7 +8,7 @@ async function newDirectory(name, master_key) {
   let iv = await newIV();
 
   return {
-    encrypted_name : await encryptContent(name, master_key, iv),
+    encrypted_name : prepareBytesForSending(await encryptContent(name, master_key, iv)),
     iv : await prepareIVforSending(iv)
   };
 }
