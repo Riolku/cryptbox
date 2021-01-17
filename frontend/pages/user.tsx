@@ -227,7 +227,7 @@ export default function User() {
                                         "content_iv": prepareIVforSending(b64_iv)
                                     }
         
-                                    postreq('/directory/' + currentFolder + '/file', ret, data => {
+                                    postreq('/directory/' + currentFolder['id'] + '/file', ret, data => {
                                         if (data['status'] != 'ok') {
                                             
                                         } else {
@@ -324,7 +324,7 @@ export default function User() {
                     <Directory data = { null } changeDirectory = { null } isFirst = { true } isLast = { false } />
                     {
                         children.map((value, index) => {
-                            return <Directory data = { value } changeDirectory = { () => setCurrentFolder({ 'name': value['name'], 'id': value['id'] }) } isFirst = { false } isLast = { index == testData.length-1 } />
+                            return <Directory data = { value } changeDirectory = { setCurrentFolder } isFirst = { false } isLast = { index == testData.length-1 } />
                         })
                     }
                 </div>
