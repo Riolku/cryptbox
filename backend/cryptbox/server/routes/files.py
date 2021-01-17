@@ -69,17 +69,15 @@ def format_file(file, c = False, p = False):
 @verify_login
 def get_directory(id):
   d = Directories.query.filter_by(id = id).first()
-  print(d)
   if d is None or d.owner != g.user.id:
     return {"status": "fail", "error": "forbidden"}
-  return {"status": "ok", **format_dir(d)}
+  return {"status": "ok", **format_dir(d, True)}
 
 @app.route("/file/<int:id>", methods = ["GET"])
 @wrap_request(False)
 @verify_login
 def get_file(id):
   f = Files.query.filter_by(id = id).first()
-  print(f)
   if f is None or f.owner != g.user.id:
     return {"status": "fail", "error": "forbidden"}
   return {"status": "ok", **format_file(id, True, True)}
