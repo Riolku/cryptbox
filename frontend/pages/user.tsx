@@ -200,14 +200,20 @@ export default function User(){
             </div>
             <div className = { styles.userBackground }>
                 <h1 className = { styles.userHeader }> { fvstate } </h1>
-                <button className = { styles.newFolder } onClick = { addFolder }> Add Folder </button>
-                <div className = { styles.uploadFile }>
-                    <h1 style = {{ position: 'absolute', top: '0%', left: '50%', transform: 'translate(-50%,-20%)', fontSize: '15px', fontFamily: 'var(--font)' }}> Upload </h1>
-                    <FilePicker onFile={(file)=>{
-                        setUpload(file.name)
-                    }}></FilePicker>
-                </div>
-                <div className = { styles.filesBackground }>
+                {
+                    fvstate == 'My Files'?
+                    <div>
+                        <button className = { styles.newFolder } onClick = { addFolder }> Add Folder </button>
+                        <div className = { styles.uploadFile }>
+                            <h1 style = {{ position: 'absolute', top: '0%', left: '50%', transform: 'translate(-50%,-20%)', fontSize: '15px', fontFamily: 'var(--font)' }}> Upload </h1>
+                            <FilePicker onFile={(file)=>{
+                                setUpload(file.name)
+                            }}></FilePicker>
+                        </div>
+                    </div>
+                    :null
+                }
+                <div className = { styles.filesBackground } style = {{ top: fvstate=='My Files'?'14%':'9%' }}>
                     <Directory data = { null } changeDirectory = { null } isFirst = { true } isLast = { false } />
                     {
                         testData.map((value, index) => {
