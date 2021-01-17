@@ -1,12 +1,12 @@
-function post(url, body, callback) {
+function postreq(url, body, callback) {
   request("POST", url, body, callback);
 }
 
-function patch(url, body, callback) {
+function patchreq(url, body, callback) {
   request("PATCH", url, body, callback);
 }
 
-function delete(url, body, callback) {
+function deletereq(url, body, callback) {
   request("DELETE", url, body, callback);
 }
 
@@ -22,7 +22,7 @@ function request(method, url, body, callback) {
   }).then(ret => ret.json()).then(callback);
 }
 
-function get(url, callback) {
+function getreq(url, callback) {
   fetch("https://api.cryptbox.kgugeler.ca" + url, {
     method: "GET",
     credentials : "include",
@@ -32,4 +32,4 @@ function get(url, callback) {
   }).then(ret => ret.json()).then(callback);
 }
 
-export { get, post, patch, delete, request };
+export { getreq, postreq, patchreq, deletereq, request };
