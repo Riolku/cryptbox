@@ -1,5 +1,6 @@
 import os
 
+# SiaSync syncs this directory to Sia
 BASE_DIR = "/srv/cryptbox/files/"
 
 def get_file_path(file_id):
