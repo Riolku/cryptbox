@@ -8,15 +8,15 @@ async function newDirectory(name, master_key) {
   let iv = await newIV();
 
   return {
-    encrypted_name : encryptContent(name, master_key, iv),
-    iv : prepareIVforSending(iv)
+    encrypted_name : await encryptContent(name, master_key, iv),
+    iv : await prepareIVforSending(iv)
   };
 }
 
 async function encryptContent(data, key, iv) {
   let encoded_data = encoder.encode(data);
 
-  return await window.crypto.subtle.encrypt(
+  return window.crypto.subtle.encrypt(
     {
       name : "AES-GCM",
       iv : iv
@@ -30,11 +30,11 @@ async function newIV() {
   return window.crypto.getRandomValues(new Uint8Array(12));
 }
 
-async function loadIVfromResponse(iv) {
+function loadIVfromResponse(iv) {
   return fromStringToBytes(b64decode(iv));
 }
 
-async function prepareIVforSending(iv) {
+function prepareIVforSending(iv) {
   return b64encode(fromBytesToString(iv));
 }
 
