@@ -67,8 +67,8 @@ function prependZero(num) {
 }
 
 function changeToDate(epoch) {
-    let date = new Date(epoch);
-    return prependZero(date.getMonth()) + '-' + prependZero(date.getDay()) + '-' + date.getFullYear();
+    let date = new Date(epoch*1000);
+    return prependZero(date.getMonth()+1) + '-' + prependZero(date.getDate()) + '-' + date.getFullYear();
 }
 
 export default function User() {
@@ -153,22 +153,25 @@ export default function User() {
             console.log(master_key);
             ret.push(
                 {
+                    'id': folder['id'],
                     'name': fromBytesToString(await decryptContent(folder['encrypted_name'], master_key, folder_iv)),
                     'modified': changeToDate(folder['modified']),
                     'created': changeToDate(folder['created']),
                     'parent': folder['parent'],
-                    'type': 'folder'
+                    'extension': 'folder'
                 }
             );
         }
         for(let file of children['files']){
+            console.log(file);
             let file_iv = file['name_iv'];
             ret.push(
                 {
+                    'id': file['id'],
                     'name': fromBytesToString(await decryptContent(file['encrypted_name'], master_key, file_iv)),
                     'modified': changeToDate(file['modified']),
                     'created': changeToDate(file['created']),
-                    'type': 'file'
+                    'extension': 'file'
                 }
             );
         }
@@ -177,6 +180,7 @@ export default function User() {
     }
 
     useEffect(() => {
+        console.log("NEW", currentFolder);
         if(currentFolder != null && currentFolder['id'] != undefined){
             if(folderPath.length > 0 && fvstate == folderPath[0]['name']){
                 let temp = [], found = false;
