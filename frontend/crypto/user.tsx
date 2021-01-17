@@ -1,5 +1,8 @@
 import { fromStringToBytes, fromBytesToString, b64encode, b64decode } from './utils';
 
+const CAN_EXTRACT = true;
+const CANNOT_EXTRACT = false;
+
 async function getUserMasterKey(username, password) {
   let salt = await deriveBitsFromUsername(username);
 
@@ -19,7 +22,13 @@ async function importMasterKeyFromStorage(storage_string) {
 
   let bytes = fromStringToBytes(decoded_string);
 
-  return window.crypto.subtle.importKey("raw", bytes);
+  return window.crypto.subtle.importKey(
+    "raw",
+    bytes,
+    "AES-GCM",
+    CAN_EXTRACT,
+    [ 'encrypt', 'decrypt' ]
+  );
 }
 
 async function prepareMasterKeyForLogin(master_key) {
@@ -79,8 +88,8 @@ async function pbkdf2_deriveKey(key, salt, iterations) {
     },
     key,
     { name : "AES-GCM", length : 256 },
-    true,
-    [ 'encrypt', 'decrypt', 'wrapKey', 'unwrapKey' ]
+    CAN_EXTRACT,
+    [ 'encrypt', 'decrypt' ]
   );
 }
 
@@ -89,7 +98,7 @@ async function importPBKDF2key(key_material) {
     "raw",
     fromStringToBytes(key_material),
     "PBKDF2",
-    false,
+    CANNOT_EXTRACT,
     ["deriveBits", "deriveKey"]
   );
 }
