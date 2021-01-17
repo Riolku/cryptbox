@@ -23,6 +23,7 @@ import { importMasterKeyFromStorage } from '../crypto/user'
 import { fromBytesToString } from '../crypto/utils'
 
 import styles from '../styles/User.module.css';
+import post  from './post';
 
 const testData = [
     {
@@ -116,9 +117,20 @@ export default function User() {
     let [firstTime, setFirstTime] = useState(true);
     let [baseDirectoryIDs, setBaseIDs] = useState({});
 
-    let [showFolderPopup, setFolderPopup] = useState(true);
+    let [showFolderPopup, setFolderPopup] = useState(false);
 
     let [popupErrorMessage, setPopupErrorMessage] = useState('');
+
+    function _arrayBufferToBase64( buffer ) {
+        var binary = '';
+        var bytes = new Uint8Array( buffer );
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode( bytes[ i ] );
+        }
+        var str = window.btoa( binary );
+        return str;
+    }
 
     const handleListItemClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: string)=>{
         setFVState(index)
@@ -186,30 +198,25 @@ export default function User() {
 
     useEffect(() => {
         if(uploadedFile != null){
-            let ret = new FormData();
 
-            let fr = new FileReader();
+            uploadedFile.arrayBuffer().then((buff)=>{
 
-            fr.readAsBinaryString(uploadedFile)
+                        let b64s = _arrayBufferToBase64(buff);
 
-            newIV().then((iv)=>{
-                importMasterKeyFromStorage(localStorage.getItem('master_key')).then((mk)=>{
-                    encryptContent(fr.result, mk, iv).then((data)=>{
-                        ret.append('file', fromBytesToString(data), uploadedFile.name);
-                        fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder + '/file', {
-                            method: 'POST',
-                            credentials: 'include',
-                            body: ret
-                        }).then(ret => ret.json())
-                        .then(data => {
+                        let ret = {
+                            "encrypted_name": uploadedFile.name,
+                            "encrypted_content": b64s,
+                            "name_iv": "YEP cock",
+                            "content_iv": "YEP cock"
+                        }
+
+                        post('/directory/' + currentFolder + '/file', ret, (data)=>{
                             if(data['status'] != 'ok'){
         
                             }else{
         
                             }
                         });
-                    }) 
-                });
             });
         }
     }, [uploadedFile]);
