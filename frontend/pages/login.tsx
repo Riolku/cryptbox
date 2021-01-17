@@ -34,10 +34,10 @@ function login() {
 
                 if(data['status'] != 'ok') setErrorMessage('Login failed');
                 else{
-                    let storage_key = await exportMasterKeyForStorage(master_key);
-
-                    localStorage.setItem('master_key', storage_key);
-                    window.location.reload();
+                    exportMasterKeyForStorage(master_key).then(storage_key => {
+                      localStorage.setItem('master_key', storage_key);
+                      window.location.reload();
+                    });
                 }
             });
         }
