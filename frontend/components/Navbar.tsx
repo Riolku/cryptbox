@@ -9,7 +9,7 @@ const Navbar = ({ linkCol }: { linkCol: string }) => {
             <div className = { styles.navbarLinkContainer }>
                 <Link href = '/'>
                     <h1 className = { styles.navbarLink } style = {{ color: linkCol }}> 
-                        HOME
+                        <img src = '/images/gradientC.png' style = {{ transform: 'translate(0,-15px)', height: '60px' }} />
                     </h1>
                 </Link>
             </div>

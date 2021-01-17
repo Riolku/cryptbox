@@ -46,7 +46,7 @@ async function prepareMasterKeyForLogin(master_key) {
 
   byte_string = fromBytesToString(bytes);
 
-  return b64encode(bytes);
+  return b64encode(byte_string);
 }
 
 async function deriveBitsFromUsername(username) {

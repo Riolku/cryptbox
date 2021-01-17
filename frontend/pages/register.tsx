@@ -32,6 +32,8 @@ function Register() {
             console.log(home);
             console.log(trash);
 
+            console.log(await prepareMasterKeyForLogin(master_key));
+
             post('/register', {
                 'username': username,
                 'password': await prepareMasterKeyForLogin(master_key),
@@ -45,7 +47,6 @@ function Register() {
                 else{
                     exportMasterKeyForStorage(master_key).then(storage_key => {
                         localStorage.setItem('master_key', storage_key);
-                        localStorage.setItem('username', username);
                         window.location.reload();
                     });
                 }

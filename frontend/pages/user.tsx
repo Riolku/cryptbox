@@ -98,7 +98,7 @@ export default function User(){
     }
 
     function submitLogout() {
-        localStorage.removeItem('username');
+        localStorage.removeItem('master_key');
         router.push('/');
     }
 
@@ -138,7 +138,6 @@ export default function User(){
     useEffect(() => {
         if(uploadedFile != null){
             let ret = new FormData();
-            console.log(uploadedFile);
             ret.append('file', uploadedFile, uploadedFile.name);
 
             fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder + '/file', {
@@ -180,15 +179,16 @@ export default function User(){
     return(
         <div>
             <div style = {{ position: 'fixed', left: 0, height: '100vh', width: '230px', top: '-9px', background: 'rgba(0,0,0,0.02)' }}>
-                <List>
+                <img src = '/images/gradientC.png' style = {{ position: 'absolute', left: '10%', top: '3.5%', height: '50px' }} />
+                <List style = {{ top: '108px' }}>
                     <ListItem button selected={fvstate === "My Files"} key={"My Files"} onClick={(ev)=>{handleListItemClick(ev, "My Files")}}>
                         <ListItemIcon><AppsIcon /></ListItemIcon>
                         <h1 className = { styles.sidebarText }> MY FILES </h1>
                     </ListItem>
-                    <ListItem button selected={fvstate === "Shared With Me"} key={"Shared With Me"} onClick={(ev)=>{handleListItemClick(ev, "Shared With Me")}}>
+                    {/*<ListItem button selected={fvstate === "Shared With Me"} key={"Shared With Me"} onClick={(ev)=>{handleListItemClick(ev, "Shared With Me")}}>
                         <ListItemIcon><FolderSharedIcon /></ListItemIcon>
                         <h1 className = { styles.sidebarText }> SHARED WITH ME </h1>
-                    </ListItem>
+                    </ListItem>*/}
                     <ListItem button selected={fvstate === "Trash"} key={"Trash"} onClick={(ev)=>{handleListItemClick(ev, "Trash")}}>
                         <ListItemIcon><DeleteIcon /></ListItemIcon>
                         <h1 className = { styles.sidebarText }> TRASH </h1>
@@ -209,7 +209,7 @@ export default function User(){
                         <div className = { styles.uploadFile }>
                             <PublishIcon style={{ position:'absolute', left:'5%', top:'7%' }}/>
                             <h1 style = {{ position: 'absolute', top: '5%', left: '60%', transform: 'translate(-50%,-20%)', fontSize: '15px', fontFamily: 'var(--font)' }}> Upload </h1>
-                            <FilePicker onFile={ setUpload }></FilePicker>
+                            <FilePicker onFile={ (file)=>{setUpload(file)} }/>
                         </div>
                     </div>
                     :null
