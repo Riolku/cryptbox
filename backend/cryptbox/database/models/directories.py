@@ -16,5 +16,5 @@ class Directories(db.Model):
     encrypted_name = dbcol(dbstr(NAME_MAX_LENGTH), nullable = False)
     name_iv = dbcol(dbstr(IV_MAX_LENGTH), nullable = False, unique = True)
 
-    modified = dbcol(dbint, nullable = False, default = 0)
-    created = dbcol(dbint, nullable = False, default = 0)
+    modified = dbcol(dbint, nullable = False)
+    created = dbcol(dbint, nullable = False)
