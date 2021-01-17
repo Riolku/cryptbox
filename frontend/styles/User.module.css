@@ -22,20 +22,71 @@
 }
 
 .headerUI {
+    border: none;
+    outline: none;
+    border-radius: 0;
+
     position: absolute;
-    right: 3.5%;
-    top: 2%;
+    left: 4%;
+    top: 10%;
     font-size: 30px;
     font-family: var(--font);
     padding: 0.5%;
+    height: 30px;
     /* background: rgba(0,0,0,0.5); */
 }
 
 .filesBackground {
     /* background: rgba(0,0,0,0.5); */
     position: absolute;
-    top: 10%;
+    top: 14%;
     width: 92%;
     left: 3.5%;
     height: 10%;
+}
+
+.newFolder {
+    padding: 0;
+    outline: none;
+    border: none;
+
+    position: absolute;
+    height: 30px;
+    width: 110px;
+    background: rgb(17,37,126);
+    color: white;
+    font-family: var(--font);
+    font-size: 15px;
+    left: 3.9%;
+    top: 10%;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.newFolder:hover {
+    background: rgb(86, 97, 146);
+    transition: 0.3s;
+}
+
+.uploadFile {
+    padding: 0;
+    outline: none;
+    border: none;
+
+    position: absolute;
+    height: 30px;
+    width: 100px;
+    background: rgb(218, 218, 218);
+    color: black;
+    font-family: var(--font);
+    font-size: 15px;
+    left: calc(4.5% + 110px);
+    top: 10%;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.uploadFile:hover {
+    background: rgb(194, 194, 194);
+    transition: 0.3s;
 }

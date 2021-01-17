@@ -10,7 +10,7 @@ export interface FilePickerProps {
 export default function FilePicker({onFile}: FilePickerProps){
     const input = useRef<HTMLInputElement>(null);
     return(
-        <Button className={styles.headerUI} variant="contained" onClick={()=>{
+        <Button className={styles.headerUI} style = {{ opacity: 0, fontFamily: 'var(--font)' }} variant="contained" onClick={()=>{
             input.current?.click();
         }}>
             <input ref={input} type="file" style={{ display: 'none'}} onChange={(ev)=>{
