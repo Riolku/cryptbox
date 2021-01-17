@@ -54,7 +54,7 @@ export default function Directory({data, chooseFile, changeDirectory, isFirst, i
 
     function deleteEntry(){
         deletereq("/file/"+data['id'], {}, ()=>{
-
+            update()
         })
     }
 
