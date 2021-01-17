@@ -17,30 +17,30 @@ async function decryptContent(requestData, master_key, iv) {
     let raw_data = loadBytesFromResponse(requestData);
 
     return decryptRawContent(raw_data, master_key, iv);
-}
+  }
 
 async function encryptContent(data, key, iv) {
-    let encoded_data = encoder.encode(data);
+  let encoded_data = encoder.encode(data);
 
-    return window.crypto.subtle.encrypt(
-        {
-        name : "AES-GCM",
-        iv : iv
-        },
-        key,
-        encoded_data
-    );
+  return window.crypto.subtle.encrypt(
+    {
+      name : "AES-GCM",
+      iv : iv
+    },
+    key,
+    encoded_data
+  );
 }
 
 async function decryptRawContent(raw_data, key, iv) {
-    return window.crypto.subtle.decrypt(
-        {
-        name : "AES-GCM",
-        iv : iv
-        },
-        key,
-        raw_data
-    );
+  return window.crypto.subtle.decrypt(
+    {
+      name : "AES-GCM",
+      iv : iv
+    },
+    key,
+    raw_data
+  );
 }
 
 async function newIV() {
