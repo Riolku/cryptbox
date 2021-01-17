@@ -82,7 +82,7 @@ export default function User(){
     const router = useRouter();
 
     const [fvstate, setFVState] = useState("My Files");
-    const [testUpload, setUpload] = useState("")
+    const [uploadedFile, setUpload] = useState(null)
 
     let [currentFolder, setCurrentFolder] = useState(0);
     let [parentFolder, setParentFolder] = useState(0);
@@ -98,6 +98,20 @@ export default function User(){
     function submitLogout() {
         localStorage.removeItem('username');
         router.push('/');
+    }
+
+    function addFolder() {
+        fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder + '/directory', {
+            method: 'POST',
+            credentials: 'include'
+        }).then(ret => ret.json())
+        .then(data => {
+            if(data['status'] != 'ok'){
+
+            }else{
+
+            }
+        });
     }
 
     useEffect(() => {
@@ -119,6 +133,27 @@ export default function User(){
         setCurrentFolder(baseDirectoryIDs[fvstate]);
     }, [fvstate]);
 
+    useEffect(() => {
+        if(uploadedFile != null){
+            let ret = new FormData();
+            console.log(uploadedFile);
+            ret.append('file', uploadedFile, uploadedFile.name);
+
+            fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder + '/file', {
+                method: 'POST',
+                credentials: 'include',
+                body: ret
+            }).then(ret => ret.json())
+            .then(data => {
+                if(data['status'] != 'ok'){
+
+                }else{
+
+                }
+            });
+        }
+    }, [uploadedFile]);
+
     if(firstTime){
         setFirstTime(false);
         fetch('https://api.cryptbox.kgugeler.ca/user/dirs', {
@@ -126,6 +161,7 @@ export default function User(){
             credentials: 'include'
         }).then(ret => ret.json())
         .then(data => {
+            console.log(data);
             if(data['status'] != 'ok'){
 
             }else{
@@ -163,11 +199,19 @@ export default function User(){
                 </List>
             </div>
             <div className = { styles.userBackground }>
-                <h1 className = { styles.userHeader }> { testUpload } </h1>
-                <FilePicker onFile={(file)=>{
-                    setUpload(file.name)
-                }}></FilePicker>
-                <div className = { styles.filesBackground }>
+                <h1 className = { styles.userHeader }> { fvstate } </h1>
+                {
+                    fvstate == 'My Files'?
+                    <div>
+                        <button className = { styles.newFolder } onClick = { addFolder }> Add Folder </button>
+                        <div className = { styles.uploadFile }>
+                            <h1 style = {{ position: 'absolute', top: '0%', left: '50%', transform: 'translate(-50%,-20%)', fontSize: '15px', fontFamily: 'var(--font)' }}> Upload </h1>
+                            <FilePicker onFile={ setUpload }></FilePicker>
+                        </div>
+                    </div>
+                    :null
+                }
+                <div className = { styles.filesBackground } style = {{ top: fvstate=='My Files'?'14%':'9%' }}>
                     <Directory data = { null } changeDirectory = { null } isFirst = { true } isLast = { false } />
                     {
                         testData.map((value, index) => {

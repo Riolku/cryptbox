@@ -2,7 +2,30 @@ import { isNullOrUndefined } from "util";
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
+import FolderIcon from '@material-ui/icons/Folder';
+import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
+import ImageIcon from '@material-ui/icons/Image';
+import DescriptionIcon from '@material-ui/icons/Description';
+import AttachFileIcon from '@material-ui/icons/AttachFile';
+
 import styles from '../styles/FileInfo.module.css';
+
+const mappedIcon = {
+    'folder': <FolderIcon className = { styles.bigImageIcon } style = {{ fontSize: 100 }} />,
+    'pdf': <PictureAsPdfIcon className = { styles.bigImageIcon } style = {{ fontSize: 100 }} />,
+    'png': <ImageIcon className = { styles.bigImageIcon } style = {{ fontSize: 100 }} />,
+    'jpg': <ImageIcon className = { styles.bigImageIcon } style = {{ fontSize: 100 }} />,
+    'jpeg': <ImageIcon className = { styles.bigImageIcon } style = {{ fontSize: 100 }} />,
+    'txt': <DescriptionIcon className = { styles.bigImageIcon } style = {{ fontSize: 100 }} />,
+};
+
+function cont(value, dict) {
+    for(let [key, val] of Object.entries(dict)) {
+        if(value != key) continue;
+        return true;
+    }
+    return false;
+}
 
 function splitString(str, c) {
     let ret = [], curr = '';
@@ -19,7 +42,7 @@ function splitString(str, c) {
 const fileInfo = ({ closeInfo }: { closeInfo: Function }) => {
     let [firstTime, setFirstTime] = useState(true);
     let [errorMessage, setErrorMessage] = useState('');
-    let [data, setData] = useState(null);
+    let [data, setData] = useState({'extension': 'png'});
 
     const router = useRouter();
 
@@ -44,11 +67,13 @@ const fileInfo = ({ closeInfo }: { closeInfo: Function }) => {
         });
     }
 
+    let typeIcon = cont(data['extension'], mappedIcon)?mappedIcon[data['extension']]:<AttachFileIcon className = { styles.bigImageIcon } style = {{ fontSize: 100 }} />;
+
     return (
         <div className = { styles.fileInfoBackground } onClick = { closeBox }>
             <div className = { styles.fileBackground }>
                 <div className = { styles.filePreviewContainer }>
-                    
+                    { typeIcon }
                 </div>
                 <div className = { styles.fileInfo }>
                     <div className = { styles.fileInfoHeader }> File Name </div>

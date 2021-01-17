@@ -78,3 +78,11 @@
     color: black;
     /* background: rgba(0,0,0,0.5); */
 }
+
+.bigImageIcon {
+    font-size: 100;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+}
