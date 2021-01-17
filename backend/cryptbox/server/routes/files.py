@@ -157,7 +157,14 @@ def delete_directory(id):
   d = Directories.query.filter_by(id = id).first()
   if d is None or d.owner != g.user.id:
     return {"status": "fail", "error": "forbidden"}
-  d.parent = g.user.trash
+
+  if d.parent != g.user.trash:
+    d.parent = g.user.trash
+  else:
+    db.session.delete(d)
+
+    delete_file_content(d.id)
+
   db.session.commit()
   return {"status": "ok"}
 
@@ -168,6 +175,13 @@ def delete_file(id):
   f = Files.query.filter_by(id = id).first()
   if f is None or f.owner != g.user.id:
     return {"status": "fail", "error": "forbidden"}
-  f.parent = g.user.trash
+
+  if f.parent != g.user.trash:
+    f.parent = g.user.trash
+  else:
+    db.session.delete(f)
+
+    delete_file_content(f.id)
+
   db.session.commit()
   return {"status": "ok"}
