@@ -96,7 +96,7 @@ export default function User(){
     }
 
     function submitLogout() {
-        localStorage.removeItem('username');
+        localStorage.removeItem('master_key');
         router.push('/');
     }
 
@@ -136,7 +136,6 @@ export default function User(){
     useEffect(() => {
         if(uploadedFile != null){
             let ret = new FormData();
-            console.log(uploadedFile);
             ret.append('file', uploadedFile, uploadedFile.name);
 
             fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder + '/file', {
@@ -178,7 +177,7 @@ export default function User(){
     return(
         <div>
             <div style = {{ position: 'fixed', left: 0, height: '100vh', width: '230px', top: '-9px', background: 'rgba(0,0,0,0.02)' }}>
-                <List>
+                <List style = {{ top: '108px' }}>
                     <ListItem button selected={fvstate === "My Files"} key={"My Files"} onClick={(ev)=>{handleListItemClick(ev, "My Files")}}>
                         <ListItemIcon><AppsIcon /></ListItemIcon>
                         <h1 className = { styles.sidebarText }> MY FILES </h1>
