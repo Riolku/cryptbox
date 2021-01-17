@@ -22,7 +22,7 @@ def check_login():
   if token is not None:
     try:
       obj = verify_jwt(token, app.secret_key)
-      user = Users.query.filter_by(id = obj["uid"])
+      user = Users.query.filter_by(id = obj["uid"]).first()
       if user:
         g.user = user
         g.token = token

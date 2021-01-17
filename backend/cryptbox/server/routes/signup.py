@@ -33,5 +33,6 @@ def register():
   u.trash = t.id
   db.session.add(u)
   db.session.commit()
+  g.user = u
   g.token = make_jwt({"uid": u.id, "at": int(time.time()), "exp": int(time.time()) + 604800}, app.config["SECRET_KEY"])
   return {"status": "ok", "username": u.username}
