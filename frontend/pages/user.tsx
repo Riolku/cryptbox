@@ -22,6 +22,8 @@ import { decryptContent, encryptContent, newIV } from '../crypto/files'
 import { importMasterKeyFromStorage } from '../crypto/user'
 import { fromBytesToString } from '../crypto/utils'
 
+import FolderPath from '../components/FolderPath';
+
 import styles from '../styles/User.module.css';
 import post  from './post';
 
@@ -131,8 +133,6 @@ export default function User() {
         var str = window.btoa( binary );
         return str;
     }
-
-    let [folderPath, setFolderPath] = useState([]);
 
     const handleListItemClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: string)=>{
         setFVState(index)
