@@ -6,7 +6,7 @@ import Header from '../components/Header';
 
 import styles from '../styles/Login.module.css';
 
-import post from './post';
+import { postreq } from './request-utils';
 
 import { getUserMasterKey, exportMasterKeyForStorage, importMasterKeyFromStorage, prepareMasterKeyForLogin } from '../crypto/user';
 import { newDirectory, encryptContent, newIV, loadIVfromResponse, prepareIVforSending } from '../crypto/files';
@@ -30,7 +30,7 @@ function Register() {
             let home = await newDirectory("Home", master_key);
             let trash = await newDirectory("Trash", master_key);
 
-            post('/register', {
+            postreq('/register', {
                 'username': username,
                 'password': await prepareMasterKeyForLogin(master_key),
                 'home' : home,

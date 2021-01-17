@@ -31,8 +31,8 @@ function fromStringToBytes(string) {
 
   let res = new Uint8Array(2 * string.length);
   for(let i=0; i<codeUnits.length; i++){
-      res[2 * i] = String.fromCharCode(first_eight_bits(codeUnits[i]));
-      res[2 * i + 1] = String.fromCharCode(last_eight_bits(codeUnits[i]));
+      res[2 * i] = first_eight_bits(codeUnits[i]);
+      res[2 * i + 1] = last_eight_bits(codeUnits[i]);
   }
 
   return res;
@@ -48,7 +48,7 @@ function last_eight_bits(int16) {
 
 function fromBytesToString(binary) {
   let res = '';
-  for(let i=0; i<bytes.length; i+=2)
+  for(let i=0; i<binary.length; i+=2)
       res += String.fromCharCode(combine_int8s(binary[i], binary[i + 1]));
 
   return res;
