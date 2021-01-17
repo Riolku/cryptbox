@@ -179,7 +179,7 @@ export default function User(){
     return(
         <div>
             <div style = {{ position: 'fixed', left: 0, height: '100vh', width: '230px', top: '-9px', background: 'rgba(0,0,0,0.02)' }}>
-                <img src = '/images/gradientC.png' style = {{ position: 'absolute', left: '10%', top: '3.5%', height: '50px' }} />
+                <img src = '/images/gradientC.png' style = {{ cursor: 'pointer', position: 'absolute', left: '10%', top: '3.5%', height: '50px' }} onClick = { () => router.push('/') } />
                 <List style = {{ top: '108px' }}>
                     <ListItem button selected={fvstate === "My Files"} key={"My Files"} onClick={(ev)=>{handleListItemClick(ev, "My Files")}}>
                         <ListItemIcon><AppsIcon /></ListItemIcon>
@@ -214,7 +214,7 @@ export default function User(){
                     </div>
                     :null
                 }
-                <div className = { styles.filesBackground } style = {{ top: fvstate=='My Files'?'14%':'9%' }}>
+                <div className = { styles.filesBackground } style = {{ top: fvstate=='My Files'?'150px':'100px' }}>
                     <Directory data = { null } changeDirectory = { null } isFirst = { true } isLast = { false } />
                     {
                         testData.map((value, index) => {
