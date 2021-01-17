@@ -179,7 +179,7 @@ def delete_file(id):
   else:
     db.session.delete(f)
 
-    delete_file_content(f.id)
+    delete_file_contents(f.id)
 
   db.session.commit()
   return {"status": "ok"}
