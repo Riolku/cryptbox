@@ -15,33 +15,33 @@ async function newDirectory(name, master_key) {
 
 async function decryptContent(requestData, master_key, iv) {
     let raw_data = loadBytesFromResponse(requestData);
-  
+
     return decryptRawContent(raw_data, master_key, iv);
   }
-  
-  async function encryptContent(data, key, iv) {
-    let encoded_data = encoder.encode(data);
-  
-    return window.crypto.subtle.encrypt(
-      {
-        name : "AES-GCM",
-        iv : iv
-      },
-      key,
-      encoded_data
-    );
-  }
-  
-  async function decryptRawContent(raw_data, key, iv) {
-    return window.crypto.subtle.decrypt(
-      {
-        name : "AES-GCM",
-        iv : iv
-      },
-      key,
-      raw_data
-    );
-  }
+
+async function encryptContent(data, key, iv) {
+  let encoded_data = encoder.encode(data);
+
+  return window.crypto.subtle.encrypt(
+    {
+      name : "AES-GCM",
+      iv : iv
+    },
+    key,
+    encoded_data
+  );
+}
+
+async function decryptRawContent(raw_data, key, iv) {
+  return window.crypto.subtle.decrypt(
+    {
+      name : "AES-GCM",
+      iv : iv
+    },
+    key,
+    raw_data
+  );
+}
 
 async function newIV() {
   return window.crypto.getRandomValues(new Uint8Array(12));
