@@ -39,6 +39,7 @@ def add_cors(response):
   response.headers["Access-Control-Allow-Origin"] = request.environ.get("HTTP_ORIGIN") or ""
   response.headers["Access-Control-Allow-Headers"] = "content-type"
   response.headers["Access-Control-Allow-Credentials"] = "true"
+  response.headers['Access-Control-Allow-Methods'] = "HEAD, OPTIONS, GET, POST, DELETE, PATCH, PUT"
   return response
 
 @app.errorhandler(500)
