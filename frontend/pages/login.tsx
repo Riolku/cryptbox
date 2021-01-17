@@ -37,6 +37,7 @@ function login() {
                 else{
                     exportMasterKeyForStorage(master_key).then(storage_key => {
                       localStorage.setItem('master_key', storage_key);
+                      localStorage.setItem('username', username);
                       router.push('/user');
                     });
                 }
