@@ -13,16 +13,10 @@ async function newDirectory(name, master_key) {
   };
 }
 
-async function decryptContent(requestData, master_key, iv) {
-  let raw_data = loadBytesFromResponse(requestData);
-
-  return decryptRawContent(raw_data, master_key, iv);
-}
-
 async function encryptContent(data, key, iv) {
   let encoded_data = encoder.encode(data);
 
-  return window.crypto.subtle.encrypt(
+  let encrypted_content = window.crypto.subtle.encrypt(
     {
       name : "AES-GCM",
       iv : iv
@@ -30,17 +24,8 @@ async function encryptContent(data, key, iv) {
     key,
     encoded_data
   );
-}
 
-async function decryptRawContent(raw_data, key, iv) {
-  return window.crypto.subtle.decrypt(
-    {
-      name : "AES-GCM",
-      iv : iv
-    },
-    key,
-    raw_data
-  );
+  return encrypted_content
 }
 
 async function newIV() {
@@ -63,4 +48,4 @@ function prepareBytesForSending(bytes) {
   return b64encode(fromBytesToString(bytes));
 }
 
-export { newDirectory, encryptContent, decryptContent, newIV, loadIVfromResponse, prepareIVforSending, prepareBytesForSending, loadBytesFromResponse };
+export { newDirectory, encryptContent, newIV, loadIVfromResponse, prepareIVforSending, prepareBytesForSending, loadBytesFromResponse };

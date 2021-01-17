@@ -17,6 +17,10 @@ import Directory from '../components/Directory'
 import FileInfo from '../components/FileInfo';
 import Header from '../components/Header';
 
+import { encryptContent, newIV } from '../crypto/files'
+import { importMasterKeyFromStorage } from '../crypto/user'
+import { fromBytesToString } from '../crypto/utils'
+
 import { decryptContent } from '../crypto/files';
 
 import styles from '../styles/User.module.css';
@@ -185,19 +189,29 @@ export default function User(){
     useEffect(() => {
         if(uploadedFile != null){
             let ret = new FormData();
-            ret.append('file', uploadedFile, uploadedFile.name);
 
-            fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder + '/file', {
-                method: 'POST',
-                credentials: 'include',
-                body: ret
-            }).then(ret => ret.json())
-            .then(data => {
-                if(data['status'] != 'ok'){
+            let fr = new FileReader();
 
-                }else{
+            fr.readAsBinaryString(uploadedFile)
 
-                }
+            newIV().then((iv)=>{
+                importMasterKeyFromStorage(localStorage.getItem('master_key')).then((mk)=>{
+                    encryptContent(fr.result, mk, iv).then((data)=>{
+                        ret.append('file', fromBytesToString(data), uploadedFile.name);
+                        fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder + '/file', {
+                            method: 'POST',
+                            credentials: 'include',
+                            body: ret
+                        }).then(ret => ret.json())
+                        .then(data => {
+                            if(data['status'] != 'ok'){
+        
+                            }else{
+        
+                            }
+                        });
+                    }) 
+                });
             });
         }
     }, [uploadedFile]);
