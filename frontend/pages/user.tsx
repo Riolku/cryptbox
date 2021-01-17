@@ -318,12 +318,12 @@ export default function User() {
             <div style = {{ position: 'fixed', left: 0, height: '100vh', width: '230px', top: '-9px', background: 'rgba(0,0,0,0.02)' }}>
                 <img src = '/images/gradientC.png' style = {{ cursor: 'pointer', position: 'absolute', left: '10%', top: '40px', height: '50px' }} onClick = { () => router.push('/') } />
                 <List style = {{ top: '108px' }}>
-                    <ListItem button key={"User"}>
+                    {/* <ListItem button key={"User"}>
                         <ListItemIcon><AccountBoxIcon/></ListItemIcon>
                         <h1 className={ styles.sidebarText }>{
                             getFromLocalStorage()
                         }</h1>
-                    </ListItem>
+                    </ListItem> */}
                     <Divider />
                     <ListItem button selected={fvstate === "My Files"} key={"My Files"} onClick={(ev)=>{handleListItemClick(ev, "My Files")}}>
                         <ListItemIcon><AppsIcon /></ListItemIcon>

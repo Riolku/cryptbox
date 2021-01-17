@@ -10,10 +10,10 @@
 .homeHeader {
     position: fixed;
     width: 90%;
-    left: 22%;
-    font-size: 40px;
+    left: 21%;
+    font-size: 34px;
     font-family: var(--font);
-    top: 160px;
+    top: 170px;
     color: white;
 }
 
@@ -21,7 +21,7 @@
     position: fixed;
     width: 17%;
     height: 50%;
-    left: 22%;
+    left: 21%;
     font-size: 17px;
     font-family: var(--font);
     top: 250px;
@@ -31,7 +31,7 @@
 
 .homeDesc {
     position: relative;
-    width: 100%;
+    width: 400px;
     /* height: 50%; */
     /* left: 22%; */
     font-size: 17px;
