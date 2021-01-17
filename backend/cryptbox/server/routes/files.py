@@ -139,7 +139,6 @@ def create_subdir(id):
 @wrap_request()
 @verify_login
 def create_file(id):
-  print(request.json, request.data, request.form)
   pd = Directories.query.filter_by(id = id).first()
   if pd is None or pd.owner != g.user.id:
     return {"status": "fail", "error": "forbidden"}

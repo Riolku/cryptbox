@@ -71,6 +71,11 @@ function changeToDate(epoch) {
     return prependZero(date.getMonth()+1) + '-' + prependZero(date.getDate()) + '-' + date.getFullYear();
 }
 
+function changeToTime(epoch) {
+    let date = new Date(epoch*1000);
+    return prependZero(date.getHours()>12?date.getHours()-12:date.getHours()) + ':' + prependZero(date.getMinutes()) + ' ' + (date.getHours()>=12?'PM':'AM');
+}
+
 export default function User() {
     const router = useRouter();
 
@@ -91,6 +96,8 @@ export default function User() {
     let [popupErrorMessage, setPopupErrorMessage] = useState('');
 
     let [folderPath, setFolderPath] = useState([]);
+
+    let [selectedFile, setSelectedFile] = useState(null);
 
     function _arrayBufferToBase64( buffer ) {
         var binary = '';
@@ -126,7 +133,7 @@ export default function User() {
 
             }else{
                 setFolderPopup(false);
-                setCurrentFolder(currentFolder);
+                updateChildren(currentFolder);
             }
         });
     }
@@ -159,21 +166,25 @@ export default function User() {
                     'id': folder['id'],
                     'name': fromBytesToString(await decryptContent(folder['encrypted_name'], master_key, folder_iv)),
                     'modified': changeToDate(folder['modified']),
+                    'modified_time': changeToTime(folder['modified']),
                     'created': changeToDate(folder['created']),
+                    'created_time': changeToTime(folder['created']),
                     'parent': folder['parent'],
                     'extension': 'folder'
                 }
             );
         }
         for(let file of children['files']){
-            console.log(file);
-            let file_iv = file['name_iv'];
+            console.log("FILE", file);
+            let file_iv = loadIVfromResponse(file['name_iv']);
             ret.push(
                 {
                     'id': file['id'],
                     'name': fromBytesToString(await decryptContent(file['encrypted_name'], master_key, file_iv)),
                     'modified': changeToDate(file['modified']),
+                    'modified_time': changeToTime(file['modified']),
                     'created': changeToDate(file['created']),
+                    'created_time': changeToTime(file['created']),
                     'extension': 'file'
                 }
             );
@@ -182,8 +193,11 @@ export default function User() {
         setChildren(ret);
     }
 
-    useEffect(() => {
-        console.log("NEW", currentFolder);
+    function closeInfo() {
+        setSelectedFile(null);
+    }
+
+    function updateChildren(currentFolder) {
         if(currentFolder != null && currentFolder['id'] != undefined){
             if(folderPath.length > 0 && fvstate == folderPath[0]['name']){
                 let temp = [], found = false;
@@ -203,16 +217,19 @@ export default function User() {
 
             getreq('/directory/' + currentFolder['id'], data => {
                 console.log("GOT DIRECTORY", data);
-                if (data['status'] != 'ok') {
+                if(data['status'] != 'ok'){
 
-                } else {
-                    let ok = JSON.parse(JSON.stringify(data));
-                    console.log("TEST", ok);
-                    setParentFolder(data['parent']);
+                }else{
+                    // setParentFolder(data['parent']);
                     conv(data['children']);
                 }
             });
         }
+    }
+
+    useEffect(() => {
+        console.log("NEW", currentFolder);
+        updateChildren(currentFolder);
     }, [currentFolder]);
 
     useEffect(() => {
@@ -328,10 +345,10 @@ export default function User() {
                     :null
                 }
                 <div className = { styles.filesBackground } style = {{ top: fvstate=='My Files'?'150px':'100px' }}>
-                    <Directory data = { null } changeDirectory = { null } isFirst = { true } isLast = { false } />
+                    <Directory data = { null } chooseFile = { null } changeDirectory = { null } isFirst = { true } isLast = { false } />
                     {
                         children.map((value, index) => {
-                            return <Directory data = { value } changeDirectory = { setCurrentFolder } isFirst = { false } isLast = { index == testData.length-1 } />
+                            return <Directory data = { value } chooseFile = { setSelectedFile } changeDirectory = { setCurrentFolder } isFirst = { false } isLast = { index == children.length-1 } />
                         })
                     }
                 </div>
@@ -351,6 +368,11 @@ export default function User() {
                     </div>
                 </div>
                 :null
+            }
+            {
+                selectedFile == null?
+                null:
+                <FileInfo fileInfo = { selectedFile } closeInfo = { closeInfo } />
             }
         </div>
     )
