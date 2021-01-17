@@ -215,27 +215,30 @@ export default function User() {
     useEffect(() => {
         if(uploadedFile != null){
             uploadedFile.arrayBuffer().then((buff)=>{
-                let master_key = importMasterKeyFromStorage(localStorage.getItem('master_key'))
-                let name_iv = newIV()
-                encryptContent(uploadedFile.name, master_key, name_iv).then((enc_name)=>{
-                    let b64_iv = newIV()
-                    encryptRawContent(buff, master_key, b64_iv).then((enc_b64s)=>{
-                        let ret = {
-                            "encrypted_name": enc_name,
-                            "encrypted_content": prepareBytesForSending(enc_b64s),
-                            "name_iv": prepareIVforSending(name_iv),
-                            "content_iv": prepareIVforSending(b64_iv)
-                        }
-
-                        postreq('/directory/' + currentFolder + '/file', ret, data => {
-                            if (data['status'] != 'ok') {
-                                
-                            } else {
+                importMasterKeyFromStorage(localStorage.getItem('master_key')).then((master_key)=>{
+                    newIV().then(name_iv=>{
+                        encryptContent(uploadedFile.name, master_key, name_iv).then((enc_name)=>{
+                            newIV().then(b64_iv=>{
+                                encryptRawContent(buff, master_key, b64_iv).then((enc_b64s)=>{
+                                    let ret = {
+                                        "encrypted_name": enc_name,
+                                        "encrypted_content": prepareBytesForSending(enc_b64s),
+                                        "name_iv": prepareIVforSending(name_iv),
+                                        "content_iv": prepareIVforSending(b64_iv)
+                                    }
         
-                            }
+                                    postreq('/directory/' + currentFolder + '/file', ret, data => {
+                                        if (data['status'] != 'ok') {
+                                            
+                                        } else {
+                    
+                                        }
+                                    });
+                                });
+                            });
                         });
-                    })
-                })
+                    });
+                });
             });
         }
     }, [uploadedFile]);
