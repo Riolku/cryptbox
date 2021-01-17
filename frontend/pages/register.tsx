@@ -6,7 +6,7 @@ import Header from '../components/Header';
 
 import styles from '../styles/Login.module.css';
 
-import post from './post';
+import post from './request-utils';
 
 import { getUserMasterKey, exportMasterKeyForStorage, importMasterKeyFromStorage, prepareMasterKeyForLogin } from '../crypto/user';
 import { newDirectory, encryptContent, newIV, loadIVfromResponse, prepareIVforSending } from '../crypto/files';
