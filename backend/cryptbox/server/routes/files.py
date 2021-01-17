@@ -31,6 +31,7 @@ def base_dirs():
 
 def format_dir(d, c = False):
   o = {
+    "id": d.id,
     "parent": d.parent,
     "encrypted_name": d.encrypted_name,
     "name_iv": d.name_iv,
@@ -83,6 +84,12 @@ def get_file(id):
     return {"status": "fail", "error": "forbidden"}
   return {"status": "ok", **format_file(id, True, True)}
 
+def modify(item):
+  item.modified = int(time.time())
+  db.session.add(item)
+  if item.parent:
+    modify(Directories.query.filter_by(id = item.parent).first())
+
 @app.route("/directory/<int:id>", methods = ["PATCH"])
 @wrap_request()
 @verify_login
@@ -91,8 +98,9 @@ def modify_directory(id):
   if d is None or d.owner != g.user.id:
     return {"status": "fail", "error": "forbidden"}
   d.encrypted_name = request.json.get("encrypted_name", d.encrypted_name)
+  modify(d)
   d.parent = request.json.get("parent", d.parent)
-  d.modified = int(time.time())
+  modify(d)
   db.session.add(d)
   db.session.commit()
   return {"status": "ok"}
@@ -107,13 +115,9 @@ def modify_file(id):
   f.encrypted_name = request.json.get("encrypted_name", f.encrypted_name)
   if "encrypted_content" in request.json:
     store_file_contents(f.id, request.json["encrypted_content"])
-  pid = f.parent = request.json.get("parent", f.parent)
-  f.modified = int(time.time())
-  while True:
-    pd = Directories.query.filter_by(id = pid).first()
-    pd.modified = int(time.time())
-    if pd.parent:
-      pid = pd.parent
+  modify(f)
+  f.parent = request.json.get("parent", f.parent)
+  modify(f)
   db.session.add(f)
   db.session.commit()
   return {"status": "ok"}
