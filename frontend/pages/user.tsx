@@ -205,10 +205,10 @@ export default function User(){
                 {
                     fvstate == 'My Files'?
                     <div>
-                        <button className = { styles.newFolder } onClick = { addFolder }><AddIcon fontSize="small" style={{ position:'absolute', left:'5%', top:'20%' }}/> <h1 style={{ position: 'absolute', top: '-7.5%', left: '25%', fontSize: '15px', fontFamily: 'var(--font)' }}>Add Folder </h1></button>
+                        <button className = { styles.newFolder } onClick = { addFolder }><AddIcon fontSize="small" style={{ position:'absolute', left:'5%', top:'18%' }}/> <h1 style={{ position: 'absolute', top: '-12%', left: '25%', fontSize: '15px', fontFamily: 'var(--font)' }}>Add Folder </h1></button>
                         <div className = { styles.uploadFile }>
-                            <PublishIcon style={{ position:'absolute', left:'5%', top:'7%' }}/>
-                            <h1 style = {{ position: 'absolute', top: '5%', left: '60%', transform: 'translate(-50%,-20%)', fontSize: '15px', fontFamily: 'var(--font)' }}> Upload </h1>
+                            <PublishIcon style={{ position:'absolute', left:'5%', top:'10%' }}/>
+                            <h1 style = {{ position: 'absolute', top: '5%', left: '60%', transform: 'translate(-50%,-32%)', fontSize: '15px', fontFamily: 'var(--font)' }}> Upload </h1>
                             <FilePicker onFile={ (file)=>{setUpload(file)} }/>
                         </div>
                     </div>
