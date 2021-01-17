@@ -31,6 +31,7 @@ function login() {
                 'username': username,
                 'password': await prepareMasterKeyForLogin(master_key)
             }, data => {
+                console.log(data);
                 if(data['status'] != 'ok') setErrorMessage('Login failed');
                 else{
                     console.log("Login Success.");

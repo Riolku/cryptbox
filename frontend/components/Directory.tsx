@@ -37,7 +37,7 @@ export default function Directory({data, changeDirectory, isFirst, isLast}: Dire
     const router = useRouter();
 
     function selectFile() {
-        if(data['extension'] == 'folder') changeDirectory(data['id']);
+        if(data['extension'] == 'folder') changeDirectory();
         else router.push('/user/file/' + data['id']);
     }
 
