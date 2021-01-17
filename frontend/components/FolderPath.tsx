@@ -6,7 +6,7 @@ const FolderPath = ({ folderPath, changeFolder }: { folderPath: any, changeFolde
     for(let i=0; i<folderPath.length; i++){
         let entry = folderPath[i];
         ret.push(
-            <h1 className = { styles.pathEntry } onClick = { () => changeFolder(entry['id']) }>
+            <h1 className = { styles.pathEntry } onClick = { () => changeFolder(entry) }>
                 { entry['name'] }
             </h1>
         );
