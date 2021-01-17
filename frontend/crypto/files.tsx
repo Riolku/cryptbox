@@ -16,7 +16,7 @@ async function newDirectory(name, master_key) {
 async function encryptContent(data, key, iv) {
   let encoded_data = encoder.encode(data);
 
-  return window.crypto.subtle.encrypt(
+  let encrypted_content = window.crypto.subtle.encrypt(
     {
       name : "AES-GCM",
       iv : iv
@@ -24,6 +24,8 @@ async function encryptContent(data, key, iv) {
     key,
     encoded_data
   );
+
+  return encrypted_content
 }
 
 async function newIV() {
