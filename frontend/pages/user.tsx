@@ -22,8 +22,6 @@ import { decryptContent, encryptContent, newIV } from '../crypto/files'
 import { importMasterKeyFromStorage } from '../crypto/user'
 import { fromBytesToString } from '../crypto/utils'
 
-import FolderPath from '../components/FolderPath';
-
 import styles from '../styles/User.module.css';
 import post  from './post';
 
@@ -241,7 +239,7 @@ export default function User() {
                     'Trash': data['trash']
                 };
                 setCurrentFolder(data['home']);
-                setFolderPath([{'name': 'My Files', 'id': data['home']}]);
+                //setFolderPath([{'name': 'My Files', 'id': data['home']}]);
                 setBaseIDs(ret);
             }
         });
@@ -291,7 +289,7 @@ export default function User() {
                 </List>
             </div>
             <div className = { styles.userBackground }>
-                <FolderPath folderPath = { folderPath } />
+                {/*<FolderPath folderPath = { folderPath } />*/}
                 {/* <h1 className = { styles.userHeader }> { fvstate } </h1> */}
                 {
                     fvstate == 'My Files'?
