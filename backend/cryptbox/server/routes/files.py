@@ -11,7 +11,7 @@ from cryptbox.database.models.directories import Directories
 from cryptbox.database.models.files import Files
 from cryptbox.database.models.users import Users
 
-from cryptbox.file_storage import get_file_contents, store_file_contents
+from cryptbox.file_storage import get_file_contents, store_file_contents, delete_file_contents
 
 from cryptbox.jwtutils import verify_jwt
 
@@ -162,8 +162,6 @@ def delete_directory(id):
     d.parent = g.user.trash
   else:
     db.session.delete(d)
-
-    delete_file_content(d.id)
 
   db.session.commit()
   return {"status": "ok"}
