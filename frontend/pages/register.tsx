@@ -29,9 +29,12 @@ function Register() {
             let home = await newDirectory("Home", master_key);
             let trash = await newDirectory("Trash", master_key);
 
+            console.log(home);
+            console.log(trash);
+
             post('/register', {
                 'username': username,
-                'password': prepareMasterKeyForLogin(master_key),
+                'password': await prepareMasterKeyForLogin(master_key),
                 'home' : home,
                 'trash' : trash
             }, data => {

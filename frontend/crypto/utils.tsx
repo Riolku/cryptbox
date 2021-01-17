@@ -65,4 +65,4 @@ function combine_int8s(int8_a, int8_b) {
   return (int8_a << 8) | int8_b;
 }
 
-export { decoder, encoder, fromStringToBytes, fromBytesToString, b64encode, b64decode };
+export { fromStringToBytes, fromBytesToString, b64encode, b64decode };
