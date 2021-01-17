@@ -28,7 +28,7 @@ def check_login():
 
 @app.after_request
 def add_cors(response):
-  response.headers["Access-Control-Allow-Origin"] = "https://cryptbox.kgugeler.ca"
+  response.headers["Access-Control-Allow-Origin"] = request.environ["HTTP_ORIGIN"] or ""
   response.headers["Access-Control-Allow-Headers"] = "content-type"
   response.headers["Access-Control-Allow-Credentials"] = "true"
   return response

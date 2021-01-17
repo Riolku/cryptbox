@@ -13,6 +13,12 @@ async function newDirectory(name, master_key) {
   };
 }
 
+async function decryptContent(requestData, master_key, iv) {
+  let raw_data = loadBytesFromResponse(requestData);
+
+  return decryptContent(raw_data, master_key, iv);
+}
+
 async function encryptContent(data, key, iv) {
   let encoded_data = encoder.encode(data);
 
@@ -23,6 +29,17 @@ async function encryptContent(data, key, iv) {
     },
     key,
     encoded_data
+  );
+}
+
+async function decryptContent(raw_data, key, iv) {
+  return window.crypto.subtle.decrypt(
+    {
+      name : "AES-GCM",
+      iv : iv
+    },
+    key,
+    raw_data
   );
 }
 
