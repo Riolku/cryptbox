@@ -31,12 +31,15 @@ function login() {
                 'username': username,
                 'password': await prepareMasterKeyForLogin(master_key)
             }, data => {
-                console.log("Login Success.");
-
                 if(data['status'] != 'ok') setErrorMessage('Login failed');
                 else{
+                    console.log("Login Success.");
+
+                    console.log(master_key);
+
                     exportMasterKeyForStorage(master_key).then(storage_key => {
                       localStorage.setItem('master_key', storage_key);
+                      localStorage.setItem('username', username);
                       router.push('/user');
                     });
                 }
