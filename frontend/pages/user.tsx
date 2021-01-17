@@ -185,10 +185,10 @@ export default function User(){
                         <ListItemIcon><AppsIcon /></ListItemIcon>
                         <h1 className = { styles.sidebarText }> MY FILES </h1>
                     </ListItem>
-                    <ListItem button selected={fvstate === "Shared With Me"} key={"Shared With Me"} onClick={(ev)=>{handleListItemClick(ev, "Shared With Me")}}>
+                    {/*<ListItem button selected={fvstate === "Shared With Me"} key={"Shared With Me"} onClick={(ev)=>{handleListItemClick(ev, "Shared With Me")}}>
                         <ListItemIcon><FolderSharedIcon /></ListItemIcon>
                         <h1 className = { styles.sidebarText }> SHARED WITH ME </h1>
-                    </ListItem>
+                    </ListItem>*/}
                     <ListItem button selected={fvstate === "Trash"} key={"Trash"} onClick={(ev)=>{handleListItemClick(ev, "Trash")}}>
                         <ListItemIcon><DeleteIcon /></ListItemIcon>
                         <h1 className = { styles.sidebarText }> TRASH </h1>
@@ -209,7 +209,7 @@ export default function User(){
                         <div className = { styles.uploadFile }>
                             <PublishIcon style={{ position:'absolute', left:'5%', top:'7%' }}/>
                             <h1 style = {{ position: 'absolute', top: '5%', left: '60%', transform: 'translate(-50%,-20%)', fontSize: '15px', fontFamily: 'var(--font)' }}> Upload </h1>
-                            <FilePicker onFile={ setUpload }></FilePicker>
+                            <FilePicker onFile={ (file)=>{setUpload(file)} }/>
                         </div>
                     </div>
                     :null
