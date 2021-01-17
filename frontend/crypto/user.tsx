@@ -1,4 +1,4 @@
-import { fromStringToBytes, fromBytesToString, b64encode, b64decode } from './utils';
+import { b64encode, b64decode, fromStringToBytes, fromBytesToString } from './utils';
 
 const CAN_EXTRACT = true;
 const CANNOT_EXTRACT = false;
@@ -12,17 +12,13 @@ async function getUserMasterKey(username, password) {
 async function exportMasterKeyForStorage(master_key) {
   let bytes = await window.crypto.subtle.exportKey("raw", master_key);
 
-  let byte_string = fromBytesToString(bytes);
-
-  return b64encode(byte_string);
+  return b64encode(bytes);
 }
 
 async function importMasterKeyFromStorage(storage_string) {
-  let decoded_string = b64decode(storage_string);
+  let bytes = b64decode(storage_string);
 
-  let bytes = fromStringToBytes(decoded_string);
-
-  console.log("READY TO DO STUFF")
+  console.log(bytes);
 
   return window.crypto.subtle.importKey(
     "raw",
@@ -35,8 +31,8 @@ async function importMasterKeyFromStorage(storage_string) {
 
 async function prepareMasterKeyForLogin(master_key) {
   let bytes = await window.crypto.subtle.exportKey("raw", master_key);
-  let byte_string = fromBytesToString(bytes);
-  let key = await importPBKDF2key(byte_string);
+
+  let key = await importPBKDF2key(bytes);
 
   let sending_key = await pbkdf2_deriveKey(
     key,
@@ -46,13 +42,11 @@ async function prepareMasterKeyForLogin(master_key) {
 
   bytes = await window.crypto.subtle.exportKey("raw", sending_key);
 
-  byte_string = fromBytesToString(bytes);
-
-  return b64encode(byte_string);
+  return b64encode(bytes);
 }
 
 async function deriveBitsFromUsername(username) {
-  let key = await importPBKDF2key(username);
+  let key = await importPBKDF2key(fromStringToBytes(username));
 
   return window.crypto.subtle.deriveBits(
     {
@@ -67,7 +61,7 @@ async function deriveBitsFromUsername(username) {
 }
 
 async function deriveKeyFromPasswordAndSalt(password, salt) {
-  let key = await importPBKDF2key(password);
+  let key = await importPBKDF2key(fromStringToBytes(password));
 
   return pbkdf2_deriveKey(
     key, salt, 10000
@@ -92,7 +86,7 @@ async function pbkdf2_deriveKey(key, salt, iterations) {
 async function importPBKDF2key(key_material) {
   return window.crypto.subtle.importKey(
     "raw",
-    fromStringToBytes(key_material),
+    key_material,
     "PBKDF2",
     CANNOT_EXTRACT,
     ["deriveBits", "deriveKey"]

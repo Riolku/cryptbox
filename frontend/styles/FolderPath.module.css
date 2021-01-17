@@ -1,0 +1,20 @@
+.pathContainer {
+    width: 90%;
+    position: absolute;
+    left: 3.9%;
+    top: 30px;
+    height: 50px;
+    background: rgba(0,0,0,0.5);
+}
+
+.pathEntry {
+    border: none;
+    outline: none;
+    padding: 0;
+
+    position: relative;
+    height: 100%;
+    font-size: 30px;
+    font-family: var(--font);
+    padding: 10px;
+}
