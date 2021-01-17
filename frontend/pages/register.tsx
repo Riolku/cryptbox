@@ -38,7 +38,7 @@ function Register() {
                 if(data['status'] != 'ok') setErrorMessage('Login failed');
                 else{
                     exportMasterKeyForStorage(master_key).then(storage_key => {
-                        localStorage.setItem('master_key', res);
+                        localStorage.setItem('master_key', storage_key);
                         localStorage.setItem('username', username);
                         window.location.reload();
                     });
