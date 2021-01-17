@@ -14,6 +14,8 @@ import FileInfo from '../../../components/FileInfo';
 
 import styles from '../../../styles/User.module.css';
 
+import getreq from '../../request-utils';
+
 const drawerWidth = 300;
 
 const testData = [
@@ -102,18 +104,14 @@ export default function User(){
     }
 
     useEffect(() => {
-        fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder, {
-            method: 'GET',
-            credentials: 'include'
-        }).then(ret => ret.json())
-        .then(data => {
-            if(data['status'] != 'ok'){
+      getreq('/directory/' + currentFolder, data => {
+        if (data['status'] != 'ok'){
 
-            }else{
-                setParentFolder(data['parent']);
-                setChildren(data['children']);
-            }
-        });
+        } else{
+          setParentFolder(data['parent']);
+          setChildren(data['children']);
+        }
+      });
     }, [currentFolder]);
 
     useEffect(() => {
@@ -130,21 +128,17 @@ export default function User(){
 
     if(firstTime){
         setFirstTime(false);
-        fetch('https://api.cryptbox.kgugeler.ca/user/dirs', {
-            method: 'GET',
-            credentials: 'include'
-        }).then(ret => ret.json())
-        .then(data => {
-            if(data['status'] != 'ok'){
+        getreq('/user/dirs', data => {
+          if (data['status'] != 'ok') {
 
-            }else{
-                let ret = {
-                    'My Files': data['home'],
-                    'Shared With Me': data['shared'],
-                    'Trash': data['trash']
-                };
-                setBaseIDs(ret);
-            }
+          } else {
+              let ret = {
+                  'My Files': data['home'],
+                  'Shared With Me': data['shared'],
+                  'Trash': data['trash']
+              };
+              setBaseIDs(ret);
+          }
         });
     }
 

@@ -10,6 +10,8 @@ import AttachFileIcon from '@material-ui/icons/AttachFile';
 
 import styles from '../styles/FileInfo.module.css';
 
+import getreq from './request-utils';
+
 const mappedIcon = {
     'folder': <FolderIcon className = { styles.bigImageIcon } style = {{ fontSize: 100 }} />,
     'pdf': <PictureAsPdfIcon className = { styles.bigImageIcon } style = {{ fontSize: 100 }} />,
@@ -57,11 +59,7 @@ const fileInfo = ({ closeInfo }: { closeInfo: Function }) => {
 
     if(firstTime){
         setFirstTime(false);
-        fetch('https://api.cryptbox.kgugeler.ca/file/' + urlPath[2], {
-            method: 'GET',
-            credentials: 'include'
-        }).then(ret => ret.json())
-        .then(data => {
+        getreq('/file/' + urlPath[2], data => {
             if(data['status'] != 'ok') setErrorMessage(data['status']);
             else setData(data);
         });

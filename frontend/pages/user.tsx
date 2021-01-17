@@ -10,7 +10,6 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import PublishIcon from '@material-ui/icons/Publish';
 import AddIcon from '@material-ui/icons/Add';
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
 
 import FilePicker from '../components/FilePicker';
 import Navbar from '../components/Navbar';
@@ -22,10 +21,9 @@ import { decryptContent, encryptContent, newIV } from '../crypto/files'
 import { importMasterKeyFromStorage } from '../crypto/user'
 import { fromBytesToString } from '../crypto/utils'
 
-import FolderPath from '../components/FolderPath';
-
 import styles from '../styles/User.module.css';
-import post  from './post';
+
+import { getreq, postreq } from './request-utils';
 
 const testData = [
     {
@@ -110,8 +108,6 @@ export default function User() {
     const [fvstate, setFVState] = useState("My Files");
     const [uploadedFile, setUpload] = useState(null)
 
-    const [username, setUsername] = useState("")
-
     let [currentFolder, setCurrentFolder] = useState(0);
     let [parentFolder, setParentFolder] = useState(0);
     let [children, setChildren] = useState([]);
@@ -119,20 +115,9 @@ export default function User() {
     let [firstTime, setFirstTime] = useState(true);
     let [baseDirectoryIDs, setBaseIDs] = useState({});
 
-    let [showFolderPopup, setFolderPopup] = useState(false);
+    let [showFolderPopup, setFolderPopup] = useState(true);
 
     let [popupErrorMessage, setPopupErrorMessage] = useState('');
-
-    function _arrayBufferToBase64( buffer ) {
-        var binary = '';
-        var bytes = new Uint8Array( buffer );
-        var len = bytes.byteLength;
-        for (var i = 0; i < len; i++) {
-            binary += String.fromCharCode( bytes[ i ] );
-        }
-        var str = window.btoa( binary );
-        return str;
-    }
 
     const handleListItemClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: string)=>{
         setFVState(index)
@@ -140,7 +125,6 @@ export default function User() {
 
     function submitLogout() {
         localStorage.removeItem('master_key');
-        localStorage.removeItem('username')
         router.push('/');
     }
 
@@ -153,20 +137,15 @@ export default function User() {
         console.log("GOT MASTER");
         let data = await encryptContent(name, master, iv);
         console.log("DONE DATA");
-        fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder + '/directory', {
-            method: 'POST',
-            credentials: 'include',
-            body: JSON.stringify({
-                'name_iv': iv,
-                'encrypted_name': data,
-                'parent': currentFolder
-            })
-        }).then(ret => ret.json())
-        .then(data => {
-            console.log("ADDED FOLDER", data);
-            if(data['status'] != 'ok'){
+        postreq('/directory/' + currentFolder + '/directory', {
+          'name_iv': iv,
+          'encrypted_name': data,
+          'parent': currentFolder
+        }, data => {
+            console.log(data);
+            if (data['status'] != 'ok') {
 
-            }else{
+            } else {
 
             }
         });
@@ -179,21 +158,15 @@ export default function User() {
     }
 
     useEffect(() => {
-        if(currentFolder != 0){
-            fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder, {
-                method: 'GET',
-                credentials: 'include'
-            }).then(ret => ret.json())
-            .then(data => {
-                console.log("GOT DIRECTORY", data);
-                if(data['status'] != 'ok'){
+      getreq('/directory/' + currentFolder', data => {
+        console.log(data);
+        if (data['status'] != 'ok') {
 
-                }else{
-                    setParentFolder(data['parent']);
-                    setChildren(conv(data['children']));
-                }
-            });
+        } else {
+          setParentFolder(data['parent']);
+          setChildren(conv(data['children']));
         }
+      });
     }, [currentFolder]);
 
     useEffect(() => {
@@ -202,36 +175,37 @@ export default function User() {
 
     useEffect(() => {
         if(uploadedFile != null){
+            let ret = new FormData();
 
-            uploadedFile.arrayBuffer().then((buff)=>{
+            let fr = new FileReader();
 
-                        let b64s = _arrayBufferToBase64(buff);
+            fr.readAsBinaryString(uploadedFile)
 
-                        let ret = {
-                            "encrypted_name": uploadedFile.name,
-                            "encrypted_content": b64s,
-                            "name_iv": "YEP cock",
-                            "content_iv": "YEP cock"
-                        }
-
-                        post('/directory/' + currentFolder + '/file', ret, (data)=>{
+            newIV().then((iv)=>{
+                importMasterKeyFromStorage(localStorage.getItem('master_key')).then((mk)=>{
+                    encryptContent(fr.result, mk, iv).then((data)=>{
+                        ret.append('file', fromBytesToString(data), uploadedFile.name);
+                        postreq('/directory/' + currentFolder + '/file', {
+                          'encrypted_name': uploadedFile.name,
+                          'encrypted_content': fromBytesToString(data),
+                          'name_iv': '',
+                          'content_iv': ''
+                        }, data => {
                             if(data['status'] != 'ok'){
         
                             }else{
         
                             }
                         });
+                    }) 
+                });
             });
         }
     }, [uploadedFile]);
 
     if(firstTime){
         setFirstTime(false);
-        fetch('https://api.cryptbox.kgugeler.ca/user/dirs', {
-            method: 'GET',
-            credentials: 'include'
-        }).then(ret => ret.json())
-        .then(data => {
+        getreq('/user/dirs', data => {
             console.log("FETCHED IDS", data);
             if(data['status'] != 'ok'){
 
@@ -241,36 +215,17 @@ export default function User() {
                     'Trash': data['trash']
                 };
                 setCurrentFolder(data['home']);
-                setFolderPath([{'name': 'My Files', 'id': data['home']}]);
                 setBaseIDs(ret);
             }
         });
-    }
-
-    function getFromLocalStorage(): string{
-        
-        let username = ""
-
-        if(process.browser){
-            username = localStorage.getItem('username')
-        }
-
-        return username;
     }
 
     return(
         <div>
             <Header title="User"/>
             <div style = {{ position: 'fixed', left: 0, height: '100vh', width: '230px', top: '-9px', background: 'rgba(0,0,0,0.02)' }}>
-                <img src = '/images/gradientC.png' style = {{ cursor: 'pointer', position: 'absolute', left: '10%', top: '40px', height: '50px' }} onClick = { () => router.push('/') } />
+                <img src = '/images/gradientC.png' style = {{ cursor: 'pointer', position: 'absolute', left: '10%', top: '3.5%', height: '50px' }} onClick = { () => router.push('/') } />
                 <List style = {{ top: '108px' }}>
-                    <ListItem button key={"User"}>
-                        <ListItemIcon><AccountBoxIcon/></ListItemIcon>
-                        <h1 className={ styles.sidebarText }>{
-                            getFromLocalStorage()
-                        }</h1>
-                    </ListItem>
-                    <Divider />
                     <ListItem button selected={fvstate === "My Files"} key={"My Files"} onClick={(ev)=>{handleListItemClick(ev, "My Files")}}>
                         <ListItemIcon><AppsIcon /></ListItemIcon>
                         <h1 className = { styles.sidebarText }> MY FILES </h1>
@@ -291,8 +246,7 @@ export default function User() {
                 </List>
             </div>
             <div className = { styles.userBackground }>
-                <FolderPath folderPath = { folderPath } />
-                {/* <h1 className = { styles.userHeader }> { fvstate } </h1> */}
+                <h1 className = { styles.userHeader }> { fvstate } </h1>
                 {
                     fvstate == 'My Files'?
                     <div>

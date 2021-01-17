@@ -6,6 +6,7 @@ from flask import request, Response, g
 
 from cryptbox import app
 
+from cryptbox.database import db
 from cryptbox.database.models.directories import Directories
 from cryptbox.database.models.files import Files
 from cryptbox.database.models.users import Users
@@ -134,9 +135,10 @@ def create_file(id):
   pd = Directories.query.filter_by(id = id).first()
   if pd is None or pd.owner != g.user.id:
     return {"status": "fail", "error": "forbidden"}
-  f = File(owner = g.user.id, parent = pd.id, encrypted_name = request.json["encrypted_name"], name_iv = request.json["name_iv"]) # TODO content
+  f = Files(owner = g.user.id, parent = pd.id, encrypted_name = request.json["encrypted_name"], name_iv = request.json["name_iv"], content_iv = request.json["content_iv"])
   db.session.add(f)
   db.session.commit()
+  store_file_contents(f.id, request.json["encrypted_content"])
   return {"status": "ok", "id": f.id}
 
 @app.route("/directory/<int:id>", methods = ["DELETE"])
