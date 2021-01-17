@@ -132,6 +132,8 @@ export default function User() {
         return str;
     }
 
+    let [folderPath, setFolderPath] = useState([]);
+
     const handleListItemClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: string)=>{
         setFVState(index)
     }
@@ -177,19 +179,21 @@ export default function User() {
     }
 
     useEffect(() => {
-        fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder, {
-            method: 'GET',
-            credentials: 'include'
-        }).then(ret => ret.json())
-        .then(data => {
-            console.log("GOT DIRECTORY", data);
-            if(data['status'] != 'ok'){
+        if(currentFolder != 0){
+            fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder, {
+                method: 'GET',
+                credentials: 'include'
+            }).then(ret => ret.json())
+            .then(data => {
+                console.log("GOT DIRECTORY", data);
+                if(data['status'] != 'ok'){
 
-            }else{
-                setParentFolder(data['parent']);
-                setChildren(conv(data['children']));
-            }
-        });
+                }else{
+                    setParentFolder(data['parent']);
+                    setChildren(conv(data['children']));
+                }
+            });
+        }
     }, [currentFolder]);
 
     useEffect(() => {
@@ -237,6 +241,7 @@ export default function User() {
                     'Trash': data['trash']
                 };
                 setCurrentFolder(data['home']);
+                setFolderPath([{'name': 'My Files', 'id': data['home']}]);
                 setBaseIDs(ret);
             }
         });
@@ -257,7 +262,7 @@ export default function User() {
         <div>
             <Header title="User"/>
             <div style = {{ position: 'fixed', left: 0, height: '100vh', width: '230px', top: '-9px', background: 'rgba(0,0,0,0.02)' }}>
-                <img src = '/images/gradientC.png' style = {{ cursor: 'pointer', position: 'absolute', left: '10%', top: '3.5%', height: '50px' }} onClick = { () => router.push('/') } />
+                <img src = '/images/gradientC.png' style = {{ cursor: 'pointer', position: 'absolute', left: '10%', top: '40px', height: '50px' }} onClick = { () => router.push('/') } />
                 <List style = {{ top: '108px' }}>
                     <ListItem button key={"User"}>
                         <ListItemIcon><AccountBoxIcon/></ListItemIcon>
@@ -286,7 +291,8 @@ export default function User() {
                 </List>
             </div>
             <div className = { styles.userBackground }>
-                <h1 className = { styles.userHeader }> { fvstate } </h1>
+                <FolderPath folderPath = { folderPath } />
+                {/* <h1 className = { styles.userHeader }> { fvstate } </h1> */}
                 {
                     fvstate == 'My Files'?
                     <div>
