@@ -14,7 +14,7 @@
 .userHeader {
     position: absolute;
     left: 3.5%;
-    top: 1%;
+    top: 11px;
     font-size: 30px;
     font-family: var(--font);
     padding: 0.5%;
@@ -41,7 +41,7 @@
 .filesBackground {
     /* background: rgba(0,0,0,0.5); */
     position: absolute;
-    top: 14%;
+    top: 130px;
     width: 92%;
     left: 3.5%;
     height: 10%;
@@ -60,7 +60,7 @@
     font-family: var(--font);
     font-size: 15px;
     left: 3.9%;
-    top: 10%;
+    top: 107px;
     cursor: pointer;
     transition: 0.3s;
 }
@@ -83,7 +83,7 @@
     font-family: var(--font);
     font-size: 15px;
     left: calc(4.5% + 120px);
-    top: 10%;
+    top: 107px;
     cursor: pointer;
     transition: 0.3s;
 }
