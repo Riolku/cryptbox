@@ -61,6 +61,20 @@ function splitString(str, c) {
     return ret;
 }
 
+function getExtension(name) {
+    let idx = name.length-1;
+    for(let i=name.length-1; i>=0; i--){
+        if(name[i] == '.'){
+            idx = i;
+            break;
+        }
+    }
+    let res = '';
+    for(let i=idx+1; i<name.length; i++)
+        res += name[i];
+    return res;
+}
+
 function prependZero(num) {
     if(num <= 9) return '0' + num;
     return num;
@@ -177,15 +191,16 @@ export default function User() {
         for(let file of children['files']){
             console.log("FILE", file);
             let file_iv = loadIVfromResponse(file['name_iv']);
+            let name = fromBytesToString(await decryptContent(file['encrypted_name'], master_key, file_iv));
             ret.push(
                 {
                     'id': file['id'],
-                    'name': fromBytesToString(await decryptContent(file['encrypted_name'], master_key, file_iv)),
+                    'name': name,
                     'modified': changeToDate(file['modified']),
                     'modified_time': changeToTime(file['modified']),
                     'created': changeToDate(file['created']),
                     'created_time': changeToTime(file['created']),
-                    'extension': 'file'
+                    'extension': getExtension(name)
                 }
             );
         }
