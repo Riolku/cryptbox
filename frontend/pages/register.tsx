@@ -29,11 +29,6 @@ function Register() {
             let home = await newDirectory("Home", master_key);
             let trash = await newDirectory("Trash", master_key);
 
-            console.log(home);
-            console.log(trash);
-
-            console.log(await prepareMasterKeyForLogin(master_key));
-
             post('/register', {
                 'username': username,
                 'password': await prepareMasterKeyForLogin(master_key),
@@ -41,7 +36,7 @@ function Register() {
                 'trash' : trash
             }, data => {
                 if(data['status'] != 'ok') {
-                  if (data['error'] == 'username_taken') setErrorMessage('This username is already in user!');
+                  if (data['error'] == 'username_taken') setErrorMessage('This username is already in use!');
                   else if (data['error'] == 'username_invalid') setErrorMessage('Usernames can only contain letters, numbers, underscores, and periods!');
                 }
                 else{

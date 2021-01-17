@@ -6,7 +6,7 @@ from ..aliases import *
 
 from ..size_constants.files import *
 
-class Files:
+class Files(db.Model):
     __tablename__ = "files"
 
     id = dbcol(dbint, primary_key = True)

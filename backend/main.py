@@ -1,4 +1,4 @@
-import sys
+import sys, traceback
 
 from cryptbox import app
 
@@ -46,7 +46,7 @@ def catch_404(e):
 @app.errorhandler(Exception)
 def catch_error(e):
   print(e)
-  return {"status": "error", "code": 500}
+  return {"status": "error", "code": 500, "details": str(e)}
 
 if __name__ == '__main__':
   debug = "debug" in sys.argv
