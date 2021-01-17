@@ -12,6 +12,7 @@
     height: 40px;
     background: rgba(0,0,0,0.1);
     transition: 0.3s;
+    color:red;
 }
 
 .fileEntryContainer {
@@ -29,6 +30,11 @@
     height: 40px;
     /* background: rgba(0,0,0,0.5); */
     border-top: 1px solid #00000033;
+}
+
+.fileEntryContainerNoHover:hover {
+    background: rgba(0,0,0,0.1);
+    transition: 0.3s;
 }
 
 .fileEntryContainer:hover {

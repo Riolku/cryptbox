@@ -372,10 +372,10 @@ export default function User() {
                     :null
                 }
                 <div className = { styles.filesBackground } style = {{ top: fvstate=='My Files'?'150px':'100px' }}>
-                    <Directory data = { null } chooseFile = { null } changeDirectory = { null } isFirst = { true } isLast = { false } />
+                    <Directory data = { null } chooseFile = { null } changeDirectory = { null } isFirst = { true } isLast = { false } update={()=>{updateChildren(currentFolder)}} />
                     {
                         children.map((value, index) => {
-                            return <Directory data = { value } chooseFile = { setSelectedFile } changeDirectory = { setCurrentFolder } isFirst = { false } isLast = { index == children.length-1 } />
+                            return <Directory data = { value } chooseFile = { setSelectedFile } changeDirectory = { setCurrentFolder } isFirst = { false } isLast = { index == children.length-1 } update={()=>{updateChildren(currentFolder)}} />
                         })
                     }
                 </div>

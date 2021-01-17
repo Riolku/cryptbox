@@ -10,6 +10,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import styles from '../styles/Directory.module.css';
 import { IconButton } from '@material-ui/core';
 
+import { deletereq } from '../pages/request-utils'
+
 const mappedIcon = {
     'folder': <FolderIcon />,
     'pdf': <PictureAsPdfIcon />,
@@ -25,6 +27,7 @@ interface DirectoryProps {
     changeDirectory: Function,
     isFirst: boolean,
     isLast: boolean
+    update: Function;
 }
 
 function cont(value, dict) {
@@ -35,7 +38,8 @@ function cont(value, dict) {
     return false;
 }
 
-export default function Directory({data, chooseFile, changeDirectory, isFirst, isLast}: DirectoryProps){
+
+export default function Directory({data, chooseFile, changeDirectory, isFirst, isLast, update}: DirectoryProps){
     const router = useRouter();
 
     function selectFile() {
@@ -46,6 +50,12 @@ export default function Directory({data, chooseFile, changeDirectory, isFirst, i
             console.log("CLICKED FILE");
             chooseFile(data);
         }
+    }
+
+    function deleteEntry(){
+        deletereq("/file/"+data['id'], {}, ()=>{
+
+        })
     }
 
     if(isFirst){
@@ -64,10 +74,10 @@ export default function Directory({data, chooseFile, changeDirectory, isFirst, i
 
      return(
         <div className = { styles.fileEntryContainerNoHover } style = {{borderBottom: isLast?'1px solid #00000033':'' }} >
-            <IconButton className={styles.deleteEntry} onClick={()=>{
-                
+            <IconButton className={styles.deleteEntry} disableRipple={true} disableFocusRipple={true} disableTouchRipple={true} onClick={()=>{
+                deleteEntry()
             }}>
-                <DeleteIcon/>
+                <DeleteIcon />
             </IconButton>
             <div className={styles.fileEntryContainer} onClick = { selectFile } >
                 <div className = { styles.fileEntryIcon } style = {{ width: '2%' }}> { typeIcon } </div>

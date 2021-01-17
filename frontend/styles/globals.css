@@ -40,7 +40,7 @@ a {
     width: 10px;
     position: absolute;
     z-index: 15;
-    background-image: url('../images/blueC.png');
+
     background-size: cover;
     background-repeat: no-repeat;
 }
