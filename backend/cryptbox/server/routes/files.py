@@ -51,6 +51,7 @@ def format_file(file, c = False, p = False):
     "id": file.id,
     "encrypted_name": file.encrypted_name,
     "name_iv": file.name_iv,
+    "content_iv": file.content_iv,
     "modified": file.modified,
     "created": file.created,
     "owner": Users.query.filter_by(id = file.owner).first().username
@@ -82,7 +83,7 @@ def get_file(id):
   f = Files.query.filter_by(id = id).first()
   if f is None or f.owner != g.user.id:
     return {"status": "fail", "error": "forbidden"}
-  return {"status": "ok", **format_file(id, True, True)}
+  return {"status": "ok", **format_file(f, True, True)}
 
 def modify(item):
   item.modified = int(time.time())
