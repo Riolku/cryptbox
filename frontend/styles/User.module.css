@@ -92,3 +92,130 @@
     background: rgb(194, 194, 194);
     transition: 0.3s;
 }
+
+.popupContainer {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    background: rgba(0,0,0,0.8);
+}
+
+.popupInnerContainer {
+    position: fixed;
+    width: 600px;
+    height: 220px;
+    left: 50%;
+    top: 40%;
+    border-radius: 5px;
+    transform: translate(-50%,-50%);
+    background: white;
+}
+
+.popupHeader {
+    position: absolute;
+    /* height: 10%; */
+    top: 5%;
+    /* background: rgba(0,0,0,0.5); */
+    left: 5%;
+    font-size: 20px;
+    font-family: var(--font);
+}
+
+.popupEntryHeader {
+    position: absolute;
+    /* height: 10%; */
+    top: 22%;
+    /* background: rgba(0,0,0,0.5); */
+    left: 5%;
+    font-size: 15px;
+    color: rgb(167, 167, 167);
+    font-family: var(--font);
+}
+
+.popupEntryInput {
+    border: none;
+    outline: none;
+    border: 1px solid black;
+    border-radius: 5px;
+    position: absolute;
+    height: 10%;
+    top: 38%;
+    /* background: rgba(0,0,0,0.5); */
+    left: 5%;
+    width: 90%;
+    padding: 3%;
+    padding-left: 2%;
+    padding-right: 2%;
+    font-size: 15px;
+    font-family: var(--font);
+}
+
+.popupBottom {
+    position: absolute;
+    width: 100%;
+    height: 23%;
+    bottom: 0;
+    background: rgba(206, 206, 206, 0.5);
+    border-top: 1px solid rgb(121, 121, 121);
+    border-radius: 0px 0px 5px 5px;
+}
+
+.popupConfirm {
+    border: none;
+    padding: 0;
+    outline: none;
+
+    position: absolute;
+    height: 60%;
+    bottom: 20%;
+    right: 2%;
+    border-radius: 5px;
+    color: white;
+    font-size: 15px;
+    font-family: var(--font);
+    width: 20%;
+    background:rgb(17,37,126);
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.popupConfirm:hover {
+    background: rgb(86, 97, 146);
+    transition: 0.3s;
+}
+
+.popupCancel {
+    border: none;
+    padding: 0;
+    outline: none;
+
+    position: absolute;
+    height: 60%;
+    bottom: 20%;
+    right: 24%;
+    border-radius: 5px;
+    color: black;
+    font-size: 15px;
+    font-family: var(--font);
+    width: 20%;
+    background:white;
+    transition: 0.3s;
+    cursor: pointer;
+    border: 1px solid rgba(0,0,0,0.5);
+}
+
+.popupCancel:hover {
+    background: rgb(231, 231, 231);
+    transition: 0.3s;
+}
+
+.popupError {
+    position: absolute;
+    /* height: 10%; */
+    top: 55%;
+    /* background: rgba(0,0,0,0.5); */
+    left: 5%;
+    font-size: 12px;
+    color: red;
+    font-family: var(--font);
+}

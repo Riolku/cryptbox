@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
 import Navbar from '../components/Navbar';
+import Header from '../components/Header';
 
 import styles from '../styles/Login.module.css';
 
-import post from './post';
+import { postreq } from './request-utils';
 
 import { getUserMasterKey, exportMasterKeyForStorage, importMasterKeyFromStorage, prepareMasterKeyForLogin } from '../crypto/user';
 import { newDirectory, encryptContent, newIV, loadIVfromResponse, prepareIVforSending } from '../crypto/files';
@@ -29,7 +30,7 @@ function Register() {
             let home = await newDirectory("Home", master_key);
             let trash = await newDirectory("Trash", master_key);
 
-            post('/register', {
+            postreq('/register', {
                 'username': username,
                 'password': await prepareMasterKeyForLogin(master_key),
                 'home' : home,
@@ -42,6 +43,7 @@ function Register() {
                 else{
                     exportMasterKeyForStorage(master_key).then(storage_key => {
                         localStorage.setItem('master_key', storage_key);
+                        localStorage.setItem('username', username);
                         router.push('/user');
                     });
                 }
@@ -54,6 +56,7 @@ function Register() {
 
     return (
         <div>
+            <Header title="Register"/>
             <Navbar linkCol = 'black' />
             <div className = { styles.mainBackground }>
                 <div className = { styles.loginBox }>

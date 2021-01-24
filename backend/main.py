@@ -16,21 +16,30 @@ CORS(app)
 @app.before_request
 def check_login():
   g.user = None
+  g.token = None
   token = request.cookies.get("token")
   if token is not None:
     try:
       obj = verify_jwt(token, app.secret_key)
-      user = Users.query.filter_by(id = obj["id"])
+      user = Users.query.filter_by(id = obj["uid"]).first()
       if user:
         g.user = user
+        g.token = token
     except:
       pass
 
 @app.after_request
+def add_cookie(response):
+  if g.user:
+    response.set_cookie("token", g.token, samesite = "None", secure = True)
+  return response
+
+@app.after_request
 def add_cors(response):
-  response.headers["Access-Control-Allow-Origin"] = "https://cryptbox.kgugeler.ca"
+  response.headers["Access-Control-Allow-Origin"] = request.environ.get("HTTP_ORIGIN") or ""
   response.headers["Access-Control-Allow-Headers"] = "content-type"
   response.headers["Access-Control-Allow-Credentials"] = "true"
+  response.headers['Access-Control-Allow-Methods'] = "HEAD, OPTIONS, GET, POST, DELETE, PATCH, PUT"
   return response
 
 @app.errorhandler(500)

@@ -24,8 +24,9 @@ def register():
   u = Users(username = username, password_hash = argon2.argon2_hash(password, salt), salt = salt)
   db.session.add(u)
   db.session.commit()
-  h = Directories(owner = u.id, encrypted_name = request.json["home" ]["encrypted_name"], name_iv = request.json["home" ]["iv"])
-  t = Directories(owner = u.id, encrypted_name = request.json["trash"]["encrypted_name"], name_iv = request.json["trash"]["iv"])
+  tm = int(time.time())
+  h = Directories(owner = u.id, encrypted_name = request.json["home" ]["encrypted_name"], name_iv = request.json["home" ]["iv"], created = tm, modified = tm)
+  t = Directories(owner = u.id, encrypted_name = request.json["trash"]["encrypted_name"], name_iv = request.json["trash"]["iv"], created = tm, modified = tm)
   db.session.add(h)
   db.session.add(t)
   db.session.commit()
@@ -33,5 +34,6 @@ def register():
   u.trash = t.id
   db.session.add(u)
   db.session.commit()
-  g.setdefault("cookies", {})["token"] = make_jwt({"uid": u.id, "at": int(time.time()), "exp": int(time.time()) + 604800}, app.config["SECRET_KEY"])
+  g.user = u
+  g.token = make_jwt({"uid": u.id, "at": int(time.time()), "exp": int(time.time()) + 604800}, app.config["SECRET_KEY"])
   return {"status": "ok", "username": u.username}

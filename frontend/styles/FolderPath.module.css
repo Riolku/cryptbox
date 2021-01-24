@@ -1,0 +1,42 @@
+.pathContainer {
+    width: 90%;
+    position: absolute;
+    left: 3.9%;
+    top: 30px;
+    height: 50px;
+    /* background: rgba(0,0,0,0.5); */
+}
+
+.pathEntry {
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    float: left;
+
+    position: relative;
+    height: 100%;
+    font-size: 30px;
+    font-family: var(--font);
+    color: rgb(81, 134, 184);
+    /* background: rgba(0,0,0,0.5); */
+    cursor: pointer;
+    padding: 10px;
+    padding-left: 0px;
+}
+
+.pathDivider {
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    float: left;
+
+    position: relative;
+    height: 100%;
+    font-size: 40px;
+    top: -5px;
+    font-family: var(--font);
+    padding: 10px;
+    padding-right: 20px;
+}

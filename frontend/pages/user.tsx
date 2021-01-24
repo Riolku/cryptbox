@@ -10,15 +10,23 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import PublishIcon from '@material-ui/icons/Publish';
 import AddIcon from '@material-ui/icons/Add';
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
 
 import FilePicker from '../components/FilePicker';
 import Navbar from '../components/Navbar';
 import Directory from '../components/Directory'
 import FileInfo from '../components/FileInfo';
+import Header from '../components/Header';
+import FolderPath from '../components/FolderPath';
+
+import { newDirectory, decryptContent, encryptContent, encryptRawContent, newIV, prepareBytesForSending, prepareIVforSending, loadIVfromResponse } from '../crypto/files'
+import { importMasterKeyFromStorage } from '../crypto/user'
+import { fromBytesToString } from '../crypto/utils'
 
 import styles from '../styles/User.module.css';
 
-const drawerWidth = 300;
+import { getreq, postreq } from './request-utils';
+import { SettingsPhoneTwoTone } from '@material-ui/icons';
 
 const testData = [
     {
@@ -41,32 +49,6 @@ const testData = [
     }
 ];
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: 'flex',
-    },
-    appBar: {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-    },
-    drawer: {
-      width: drawerWidth,
-      flexShrink: 0,
-    },
-    drawerPaper: {
-      width: drawerWidth,
-    },
-    // necessary for content to be below app bar
-    toolbar: theme.mixins.toolbar,
-    content: {
-      flexGrow: 1,
-      backgroundColor: theme.palette.background.default,
-      paddingLeft: 285,
-    },
-  }),
-);
-
 function splitString(str, c) {
     let ret = [], curr = '';
     for(let i=0; i<str.length; i++){
@@ -79,108 +61,282 @@ function splitString(str, c) {
     return ret;
 }
 
-export default function User(){
-    const classes = useStyles();
+function getExtension(name) {
+    let idx = name.length-1;
+    for(let i=name.length-1; i>=0; i--){
+        if(name[i] == '.'){
+            idx = i;
+            break;
+        }
+    }
+    let res = '';
+    for(let i=idx+1; i<name.length; i++)
+        res += name[i];
+    return res;
+}
+
+function prependZero(num) {
+    if(num <= 9) return '0' + num;
+    return num;
+}
+
+function changeToDate(epoch) {
+    let date = new Date(epoch*1000);
+    return prependZero(date.getMonth()+1) + '-' + prependZero(date.getDate()) + '-' + date.getFullYear();
+}
+
+function changeToTime(epoch) {
+    let date = new Date(epoch*1000);
+    return prependZero(date.getHours()>12?date.getHours()-12:date.getHours()) + ':' + prependZero(date.getMinutes()) + ' ' + (date.getHours()>=12?'PM':'AM');
+}
+
+export default function User() {
     const router = useRouter();
 
-    const [fvstate, setFVState] = useState("My Files");
+    const [fvstate, setFVState] = useState("");
     const [uploadedFile, setUpload] = useState(null)
 
-    let [currentFolder, setCurrentFolder] = useState(0);
+    const [username, setUsername] = useState("")
+
+    let [currentFolder, setCurrentFolder] = useState(null);
     let [parentFolder, setParentFolder] = useState(0);
-    let [children, setChildren] = useState(null);
+    let [children, setChildren] = useState([]);
 
     let [firstTime, setFirstTime] = useState(true);
     let [baseDirectoryIDs, setBaseIDs] = useState({});
 
-    const handleListItemClick =(event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: string)=>{
+    let [showFolderPopup, setFolderPopup] = useState(false);
+
+    let [popupErrorMessage, setPopupErrorMessage] = useState('');
+
+    let [folderPath, setFolderPath] = useState([]);
+
+    let [selectedFile, setSelectedFile] = useState(null);
+
+    function _arrayBufferToBase64( buffer ) {
+        var binary = '';
+        var bytes = new Uint8Array( buffer );
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode( bytes[ i ] );
+        }
+        var str = window.btoa( binary );
+        return str;
+    }
+
+    const handleListItemClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: string)=>{
         setFVState(index)
     }
 
     function submitLogout() {
         localStorage.removeItem('master_key');
+        localStorage.removeItem('username')
         router.push('/');
     }
 
-    function addFolder() {
-        fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder + '/directory', {
-            method: 'POST',
-            credentials: 'include'
-        }).then(ret => ret.json())
-        .then(data => {
+    async function addFolder(name) {
+        let master = await importMasterKeyFromStorage(localStorage.getItem('master_key'));
+        let temp = await newDirectory(name, master);
+        postreq('/directory/' + currentFolder['id'] + '/directory', {
+            'name_iv': temp['iv'],
+            'encrypted_name': temp['encrypted_name'],
+            'parent': currentFolder['id']
+        }, data => {
+            console.log("ADDED FOLDER", data);
             if(data['status'] != 'ok'){
 
             }else{
-
+                setFolderPopup(false);
+                updateChildren(currentFolder);
             }
         });
     }
 
-    useEffect(() => {
-        fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder, {
-            method: 'GET',
-            credentials: 'include'
-        }).then(ret => ret.json())
-        .then(data => {
-            if(data['status'] != 'ok'){
+    function attemptAddFolder() {
+        let name = (document.getElementById('create-folder-name') as HTMLInputElement).value;
+        if(name == '') setPopupErrorMessage('Please enter a folder name');
+        else addFolder(name);
+    }
 
-            }else{
-                setParentFolder(data['parent']);
-                setChildren(data['children']);
-            }
+    async function conv(children) {
+        let ret = [], master_key = await importMasterKeyFromStorage(localStorage.getItem('master_key'));
+        children['directories'].sort(function(a, b) {
+            if(a['modified'] == b['modified']) return a['created'] > b['created'];
+            return a['modified'] > b['modified'];
         });
-    }, [currentFolder]);
+        children['files'].sort(function(a, b) {
+            if(a['modified'] == b['modified']) return a['created'] > b['created'];
+            return a['modified'] > b['modified'];
+        });
+        for(let folder of children['directories']){
+            let folder_iv = loadIVfromResponse(folder['name_iv']);
+            console.log(folder);
+            console.log(master_key);
 
-    useEffect(() => {
-        setCurrentFolder(baseDirectoryIDs[fvstate]);
-    }, [fvstate]);
+            console.log(await decryptContent(folder['encrypted_name'], master_key, folder_iv));
+            
+            ret.push(
+                {
+                    'id': folder['id'],
+                    'name': fromBytesToString(await decryptContent(folder['encrypted_name'], master_key, folder_iv)),
+                    'modified': changeToDate(folder['modified']),
+                    'modified_time': changeToTime(folder['modified']),
+                    'created': changeToDate(folder['created']),
+                    'created_time': changeToTime(folder['created']),
+                    'parent': folder['parent'],
+                    'extension': 'folder'
+                }
+            );
+        }
+        for(let file of children['files']){
+            console.log("FILE", file);
+            let file_iv = loadIVfromResponse(file['name_iv']);
+            let name = fromBytesToString(await decryptContent(file['encrypted_name'], master_key, file_iv));
+            ret.push(
+                {
+                    'id': file['id'],
+                    'name': name,
+                    'modified': changeToDate(file['modified']),
+                    'modified_time': changeToTime(file['modified']),
+                    'created': changeToDate(file['created']),
+                    'created_time': changeToTime(file['created']),
+                    'extension': getExtension(name)
+                }
+            );
+        }
+        console.log(ret);
+        setChildren(ret);
+    }
 
-    useEffect(() => {
-        if(uploadedFile != null){
-            let ret = new FormData();
-            ret.append('file', uploadedFile, uploadedFile.name);
+    function closeInfo() {
+        setSelectedFile(null);
+    }
 
-            fetch('https://api.cryptbox.kgugeler.ca/directory/' + currentFolder + '/file', {
-                method: 'POST',
-                credentials: 'include',
-                body: ret
-            }).then(ret => ret.json())
-            .then(data => {
+    function updateChildren(currentFolder) {
+        if(currentFolder != null && currentFolder['id'] != undefined){
+            if(folderPath.length > 0 && fvstate == folderPath[0]['name']){
+                let temp = [], found = false;
+                for(let entry of folderPath){
+                    temp.push(entry);
+                    if(entry['id'] == currentFolder['id']){
+                        found = true;
+                        break;
+                    }
+                }
+                if(!found){
+                    let temp = folderPath;
+                    temp.push(currentFolder);
+                    setFolderPath(temp);
+                }else setFolderPath(temp);
+            }else{
+                console.log("bruga", baseDirectoryIDs[fvstate]);
+                setFolderPath([{'name': fvstate, 'id': baseDirectoryIDs[fvstate] }]);
+            }
+
+            getreq('/directory/' + currentFolder['id'], data => {
+                console.log("GOT DIRECTORY", data);
                 if(data['status'] != 'ok'){
 
                 }else{
-
+                    // setParentFolder(data['parent']);
+                    conv(data['children']);
                 }
+            });
+        }
+    }
+
+    useEffect(() => {
+        console.log("NEW", currentFolder);
+        updateChildren(currentFolder);
+    }, [currentFolder]);
+
+    useEffect(() => {
+        // if(baseDirectoryIDs[fvstate] != undefined)
+        console.log("CHANGED");
+        setCurrentFolder({ 'name': fvstate, 'id': baseDirectoryIDs[fvstate] });
+    }, [fvstate]);
+
+    useEffect(() => {
+        console.log("GOING TO MY FILES");
+        setFVState('My Files');
+        setCurrentFolder({ 'name': 'My Files', 'id': baseDirectoryIDs['My Files'] });
+    }, [baseDirectoryIDs]);
+
+    useEffect(() => {
+        if(uploadedFile != null){
+            uploadedFile.arrayBuffer().then((buff)=>{
+                importMasterKeyFromStorage(localStorage.getItem('master_key')).then((master_key)=>{
+                    newIV().then(name_iv=>{
+                        encryptContent(uploadedFile.name, master_key, name_iv).then((enc_name)=>{
+                            newIV().then(b64_iv=>{
+                                encryptRawContent(buff, master_key, b64_iv).then((enc_b64s)=>{
+                                    let ret = {
+                                        "encrypted_name": prepareBytesForSending(enc_name),
+                                        "encrypted_content": prepareBytesForSending(enc_b64s),
+                                        "name_iv": prepareIVforSending(name_iv),
+                                        "content_iv": prepareIVforSending(b64_iv)
+                                    }
+
+                                    postreq('/directory/' + currentFolder['id'] + '/file', ret, data => {
+                                        if (data['status'] != 'ok') {
+
+                                        } else {
+                                            updateChildren(currentFolder);
+                                        }
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
             });
         }
     }, [uploadedFile]);
 
     if(firstTime){
         setFirstTime(false);
-        fetch('https://api.cryptbox.kgugeler.ca/user/dirs', {
-            method: 'GET',
-            credentials: 'include'
-        }).then(ret => ret.json())
-        .then(data => {
-            console.log(data);
+        getreq('/user/dirs', data => {
+            console.log("FETCHED IDS", data);
             if(data['status'] != 'ok'){
 
             }else{
                 let ret = {
                     'My Files': data['home'],
-                    'Shared With Me': data['shared'],
                     'Trash': data['trash']
                 };
+                console.log("ID", data['home']);
                 setBaseIDs(ret);
+                // setCurrentFolder({ 'name': 'My Files', 'id': data['home'] });
+                // setFolderPath([{'name': 'My Files', 'id': data['home']}]);
+                //setFolderPath([{'name': 'My Files', 'id': data['home']}]);
             }
         });
     }
 
+    function getFromLocalStorage(): string{
+
+        let username = ""
+
+        if(process.browser){
+            username = localStorage.getItem('username')
+        }
+
+        return username;
+    }
+
     return(
         <div>
+            <Header title="User"/>
             <div style = {{ position: 'fixed', left: 0, height: '100vh', width: '230px', top: '-9px', background: 'rgba(0,0,0,0.02)' }}>
-                <img src = '/images/gradientC.png' style = {{ cursor: 'pointer', position: 'absolute', left: '10%', top: '3.5%', height: '50px' }} onClick = { () => router.push('/') } />
+                <img src = '/images/gradientC.png' style = {{ cursor: 'pointer', position: 'absolute', left: '10%', top: '40px', height: '50px' }} onClick = { () => router.push('/') } />
                 <List style = {{ top: '108px' }}>
+                    {/* <ListItem button key={"User"}>
+                        <ListItemIcon><AccountBoxIcon/></ListItemIcon>
+                        <h1 className={ styles.sidebarText }>{
+                            getFromLocalStorage()
+                        }</h1>
+                    </ListItem> */}
+                    <Divider />
                     <ListItem button selected={fvstate === "My Files"} key={"My Files"} onClick={(ev)=>{handleListItemClick(ev, "My Files")}}>
                         <ListItemIcon><AppsIcon /></ListItemIcon>
                         <h1 className = { styles.sidebarText }> MY FILES </h1>
@@ -201,28 +357,50 @@ export default function User(){
                 </List>
             </div>
             <div className = { styles.userBackground }>
-                <h1 className = { styles.userHeader }> { fvstate } </h1>
+                <FolderPath folderPath = { folderPath } changeFolder = { setCurrentFolder } />
+                {/* <h1 className = { styles.userHeader }> { fvstate } </h1> */}
                 {
                     fvstate == 'My Files'?
                     <div>
-                        <button className = { styles.newFolder } onClick = { addFolder }><AddIcon fontSize="small" style={{ position:'absolute', left:'5%', top:'20%' }}/> <h1 style={{ position: 'absolute', top: '-7.5%', left: '25%', fontSize: '15px', fontFamily: 'var(--font)' }}>Add Folder </h1></button>
+                        <button className = { styles.newFolder } onClick = { () => setFolderPopup(true) }><AddIcon fontSize="small" style={{ position:'absolute', left:'5%', top:'18%' }}/> <h1 style={{ position: 'absolute', top: '-12%', left: '25%', fontSize: '15px', fontFamily: 'var(--font)' }}>Add Folder </h1></button>
                         <div className = { styles.uploadFile }>
-                            <PublishIcon style={{ position:'absolute', left:'5%', top:'7%' }}/>
-                            <h1 style = {{ position: 'absolute', top: '5%', left: '60%', transform: 'translate(-50%,-20%)', fontSize: '15px', fontFamily: 'var(--font)' }}> Upload </h1>
+                            <PublishIcon style={{ position:'absolute', left:'5%', top:'10%' }}/>
+                            <h1 style = {{ position: 'absolute', top: '5%', left: '60%', transform: 'translate(-50%,-32%)', fontSize: '15px', fontFamily: 'var(--font)' }}> Upload </h1>
                             <FilePicker onFile={ (file)=>{setUpload(file)} }/>
                         </div>
                     </div>
                     :null
                 }
                 <div className = { styles.filesBackground } style = {{ top: fvstate=='My Files'?'150px':'100px' }}>
-                    <Directory data = { null } changeDirectory = { null } isFirst = { true } isLast = { false } />
+                    <Directory data = { null } chooseFile = { null } changeDirectory = { null } isFirst = { true } isLast = { false } update={()=>{updateChildren(currentFolder)}} />
                     {
-                        testData.map((value, index) => {
-                            return <Directory data = { value } changeDirectory = { setCurrentFolder } isFirst = { false } isLast = { index == testData.length-1 } />
+                        children.map((value, index) => {
+                            return <Directory data = { value } chooseFile = { setSelectedFile } changeDirectory = { setCurrentFolder } isFirst = { false } isLast = { index == children.length-1 } update={()=>{updateChildren(currentFolder)}} />
                         })
                     }
                 </div>
             </div>
+            {
+                showFolderPopup?
+                <div className = { styles.popupContainer }>
+                    <div className = { styles.popupInnerContainer }>
+                        <h1 className = { styles.popupHeader }> Create Folder </h1>
+                        <h1 className = { styles.popupError }> { popupErrorMessage } </h1>
+                        <h1 className = { styles.popupEntryHeader }> Name </h1>
+                        <input id = 'create-folder-name' className = { styles.popupEntryInput } placeholder = 'Folder name' />
+                        <div className = { styles.popupBottom }>
+                            <button className = { styles.popupConfirm } onClick = { attemptAddFolder }> Confirm </button>
+                            <button className = { styles.popupCancel } onClick = { () => setFolderPopup(false) }> Cancel </button>
+                        </div>
+                    </div>
+                </div>
+                :null
+            }
+            {
+                selectedFile == null?
+                null:
+                <FileInfo fileInfo = { selectedFile } closeInfo = { closeInfo } />
+            }
         </div>
     )
 }
