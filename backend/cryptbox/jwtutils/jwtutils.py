@@ -9,4 +9,4 @@ def verify_jwt(tkn, key):
     raise InvalidJWT()
 
 def make_jwt(payload, key):
-  return jwt.encode(payload, key, algorithm = "HS256").decode("utf-8")
+  return jwt.encode(payload, key, algorithm = "HS256")

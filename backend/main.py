@@ -30,7 +30,7 @@ def check_login():
 
 @app.after_request
 def add_cookie(response):
-  if g.user:
+  if g.user and g.token:
     response.set_cookie("token", g.token, samesite = "None", secure = True)
   return response
 
@@ -52,7 +52,7 @@ def catch_404(e):
   print(e)
   return {"status": "error", "code": 404}
 
-@app.errorhandler(Exception)
+#@app.errorhandler(Exception)
 def catch_error(e):
   print(e)
   return {"status": "error", "code": 500, "details": str(e)}
